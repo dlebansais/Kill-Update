@@ -1,5 +1,4 @@
-﻿using KillUpdate;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows;
@@ -56,8 +55,7 @@ namespace TaskbarTools
             }
             catch (Exception e)
             {
-                App.AddLog($"(from TaskbarIcon.Create) {e.Message}");
-                throw new IconCreationFailedException();
+                throw new IconCreationFailedException(e);
             }
         }
 
@@ -191,7 +189,7 @@ namespace TaskbarTools
                 if (Entry.Value == command)
                     return Entry.Key;
 
-            throw new InvalidCommandException();
+            throw new InvalidCommandException(command);
         }
 
         /// <summary>
@@ -368,6 +366,15 @@ namespace TaskbarTools
         #endregion
     }
 
-    public class IconCreationFailedException : Exception {}
-    public class InvalidCommandException : Exception {}
+    public class IconCreationFailedException : Exception
+    {
+        public IconCreationFailedException(Exception originalException) { OriginalException = originalException; }
+        public Exception OriginalException { get; private set; }
+    }
+
+    public class InvalidCommandException : Exception
+    {
+        public InvalidCommandException(ICommand command) { Command = command; }
+        public ICommand Command { get; private set; }
+    }
 }
