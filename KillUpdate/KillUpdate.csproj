@@ -104,7 +104,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\main.ico" />
-    <EmbeddedResource Include="Resources\Taskbar.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Locked-Disabled.ico" />
+    <EmbeddedResource Include="Resources\Locked-Enabled.ico" />
+    <EmbeddedResource Include="Resources\Unlocked-Disabled.ico" />
+    <EmbeddedResource Include="Resources\Unlocked-Enabled.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">

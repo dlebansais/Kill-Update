@@ -107,6 +107,16 @@ namespace TaskbarTools
         }
 
         /// <summary>
+        /// Change the taskbar icon.
+        /// </summary>
+        /// <param name="command">The command associated to the menu item</param>
+        /// <param name="text">The new menu item text</param>
+        public void UpdateIcon(Icon icon)
+        {
+            SetNotifyIcon(NotifyIcon, icon);
+        }
+
+        /// <summary>
         /// Set the tool tip text displayed when the mouse is over the taskbar icon.
         /// </summary>
         /// <param name="toolTipText">The new tool tip text</param>
@@ -162,6 +172,15 @@ namespace TaskbarTools
             Type t = typeof(NotifyIcon);
             System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
             t.GetField("text", hidden).SetValue(ni, text);
+            if ((bool)t.GetField("added", hidden).GetValue(ni))
+                t.GetMethod("UpdateIcon", hidden).Invoke(ni, new object[] { true });
+        }
+
+        private static void SetNotifyIcon(NotifyIcon ni, Icon icon)
+        {
+            Type t = typeof(NotifyIcon);
+            System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+            t.GetField("icon", hidden).SetValue(ni, icon);
             if ((bool)t.GetField("added", hidden).GetValue(ni))
                 t.GetMethod("UpdateIcon", hidden).Invoke(ni, new object[] { true });
         }
