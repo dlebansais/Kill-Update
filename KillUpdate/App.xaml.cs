@@ -312,7 +312,7 @@ namespace KillUpdate
             AddContextMenuSeparator(Result);
             AddContextMenu(Result, ExitMenu, true, true);
 
-            Icon = LoadCurrentIcon(IsLockEnabled);
+            Icon = LoadCurrentIcon(LockMenu.IsChecked);
 
             App.AddLog("Menu created");
 
@@ -457,8 +457,11 @@ namespace KillUpdate
         {
             App.AddLog("InitServiceManager starting");
 
-            if (GetSettingBool("Locked", true))
-                StartType = ServiceStartMode.Disabled;
+            if (IsBoolKeySet("Locked"))
+                if (GetSettingBool("Locked", true))
+                    StartType = ServiceStartMode.Disabled;
+                else
+                    StartType = ServiceStartMode.Manual;
 
             UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
             UpdateWatch = new Stopwatch();
