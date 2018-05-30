@@ -48,7 +48,7 @@ namespace KillUpdate
             }
             catch (Exception e)
             {
-                App.AddLog("(from App) " + e.Message);
+                App.AddLog($"(from App) {e.Message}");
 
                 Shutdown();
                 return;
@@ -80,7 +80,7 @@ namespace KillUpdate
                     else
                         _IsElevated = false;
 
-                    App.AddLog("IsElevated=" + _IsElevated.ToString());
+                    App.AddLog($"IsElevated={_IsElevated}");
                 }
 
                 return _IsElevated.Value;
@@ -115,7 +115,7 @@ namespace KillUpdate
             }
             catch (Exception e)
             {
-                App.AddLog("(from InitSettings) " + e.Message);
+                App.AddLog($"(from InitSettings) {e.Message}");
             }
         }
 
@@ -237,13 +237,13 @@ namespace KillUpdate
                     using (Stream rs = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
                     {
                         Icon Result = new Icon(rs);
-                        App.AddLog("Resource " + iconName + " loaded");
+                        App.AddLog($"Resource {iconName} loaded");
 
                         return Result;
                     }
                 }
 
-            App.AddLog("Resource " + iconName + " not found");
+            App.AddLog($"Resource {iconName} not found");
             return null;
         }
 
@@ -256,13 +256,13 @@ namespace KillUpdate
                     using (Stream rs = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
                     {
                         Bitmap Result = new Bitmap(rs);
-                        App.AddLog("Resource " + bitmapName + " loaded");
+                        App.AddLog($"Resource {bitmapName} loaded");
 
                         return Result;
                     }
                 }
 
-            App.AddLog("Resource " + bitmapName + " not found");
+            App.AddLog($"Resource {bitmapName} not found");
             return null;
         }
 
@@ -421,7 +421,7 @@ namespace KillUpdate
             Icon Icon = LoadCurrentIcon(LockIt);
             TaskbarIcon.UpdateIcon(Icon);
 
-            App.AddLog("Lock mode: " + LockIt.ToString());
+            App.AddLog($"Lock mode: {LockIt}");
         }
 
         private void OnCommandExit(object sender, ExecutedRoutedEventArgs e)
@@ -514,7 +514,7 @@ namespace KillUpdate
             }
             catch (Exception e)
             {
-                App.AddLog("(from OnUpdate) " + e.Message);
+                App.AddLog($"(from OnUpdate) {e.Message}");
             }
         }
 
@@ -532,7 +532,7 @@ namespace KillUpdate
                     ServiceHelper.ChangeStartMode(Service, NewStartType);
 
                     StartType = NewStartType;
-                    App.AddLog("Service type=" + StartType.ToString());
+                    App.AddLog($"Service type={StartType}");
                 }
                 else
                 {
@@ -541,7 +541,7 @@ namespace KillUpdate
             }
             catch (Exception e)
             {
-                App.AddLog("(from ChangeLockMode) " + e.Message);
+                App.AddLog($"(from ChangeLockMode) {e.Message}");
             }
         }
 
@@ -567,7 +567,9 @@ namespace KillUpdate
         #region Debugging
         public static void AddLog(string text)
         {
-            Debug.WriteLine("KillUpdate - " + DateTime.UtcNow.ToString(CultureInfo.InvariantCulture) + ": " + text);
+            DateTime UtcNow = DateTime.UtcNow;
+            string TimeLog = UtcNow.ToString(CultureInfo.InvariantCulture) + UtcNow.Millisecond.ToString("D3");
+            Debug.WriteLine($"KillUpdate - {TimeLog}: {text}");
         }
         #endregion
     }

@@ -56,7 +56,7 @@ namespace TaskbarTools
             }
             catch (Exception e)
             {
-                App.AddLog("(from TaskbarIcon.Create) " + e.Message);
+                App.AddLog($"(from TaskbarIcon.Create) {e.Message}");
                 throw new IconCreationFailedException();
             }
         }

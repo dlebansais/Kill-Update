@@ -40,7 +40,7 @@ namespace SchedulerTools
             }
             catch (Exception e)
             {
-                App.AddLog("(from Scheduler.AddTask) " + e.Message);
+                App.AddLog($"(from Scheduler.AddTask) {e.Message}");
             }
 
             return false;
@@ -135,7 +135,7 @@ namespace SchedulerTools
             }
             catch (Exception e)
             {
-                App.AddLog("(from Scheduler.AddTaskToScheduler) " + e.Message);
+                App.AddLog($"(from Scheduler.AddTaskToScheduler) {e.Message}");
             }
 
             return false;
