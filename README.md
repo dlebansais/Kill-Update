@@ -8,7 +8,7 @@ Right-click the icon to pop a menu with the following items:
 
 - Load at startup. When checked, the application is loaded when a user logs in.
 - Locked. When checked, the application is preventing Windows from upgrading.
-- Exit.
+- Exit
 
 # How does it work?
 Every 10 seconds, this application checks the Windows Update service, and is not disabled, disables it.
