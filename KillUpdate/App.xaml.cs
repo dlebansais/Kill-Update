@@ -536,6 +536,9 @@ namespace KillUpdate
 
                     StartType = NewStartType;
                     App.AddLog($"Service type={StartType}");
+
+                    if (lockIt && Service.CanStop && Service.Status == ServiceControllerStatus.Running)
+                        Service.Stop();
                 }
                 else
                 {
