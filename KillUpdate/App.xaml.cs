@@ -497,6 +497,7 @@ namespace KillUpdate
             try
             {
                 ServiceStartMode? PreviousStartType = StartType;
+                bool LockIt = GetSettingBool("Locked", true);
 
                 ServiceController[] Services = ServiceController.GetServices();
 
@@ -507,9 +508,12 @@ namespace KillUpdate
 
                         if (PreviousStartType.HasValue && PreviousStartType.Value != StartType.Value)
                         {
-                            App.AddLog("Changing lock mode because service start type doesn't match");
-                            ChangeLockMode(GetSettingBool("Locked", true));
+                            App.AddLog("Start type changed");
+
+                            ChangeLockMode(Service, LockIt);
                         }
+
+                        StopIfRunning(Service, LockIt);
 
                         PreviousStartType = StartType;
                         break;
@@ -530,24 +534,31 @@ namespace KillUpdate
                 ServiceController Service = new ServiceController(WindowsUpdateServiceName);
 
                 if (IsElevated)
-                {
-                    ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
-                    ServiceHelper.ChangeStartMode(Service, NewStartType);
-
-                    StartType = NewStartType;
-                    App.AddLog($"Service type={StartType}");
-
-                    if (lockIt && Service.CanStop && Service.Status == ServiceControllerStatus.Running)
-                        Service.Stop();
-                }
+                    ChangeLockMode(Service, lockIt);
                 else
-                {
                     App.AddLog("Not elevated, cannot change");
-                }
             }
             catch (Exception e)
             {
                 App.AddLog($"(from ChangeLockMode) {e.Message}");
+            }
+        }
+
+        private void ChangeLockMode(ServiceController Service, bool lockIt)
+        {
+            ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
+            ServiceHelper.ChangeStartMode(Service, NewStartType);
+
+            StartType = NewStartType;
+            App.AddLog($"Service type={StartType}");
+        }
+
+        private void StopIfRunning(ServiceController Service, bool lockIt)
+        {
+            if (lockIt && Service.Status == ServiceControllerStatus.Running && Service.CanStop)
+            {
+                Service.Stop();
+                App.AddLog("Service stopped");
             }
         }
 
