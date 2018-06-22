@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KillUpdate", "KillUpdate\KillUpdate.csproj", "{82665A13-754F-4EA3-ABA7-0561AB862F20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update", "Kill-Update\Kill-Update.csproj", "{82665A13-754F-4EA3-ABA7-0561AB862F20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update-Plugin", "Kill-Update-Plugin\Kill-Update-Plugin.csproj", "{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Debug|x64.Build.0 = Debug|x64
 		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Release|x64.ActiveCfg = Release|x64
 		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Release|x64.Build.0 = Release|x64
+		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Debug|x64.ActiveCfg = Debug|x64
+		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Debug|x64.Build.0 = Debug|x64
+		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Release|x64.ActiveCfg = Release|x64
+		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
