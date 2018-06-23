@@ -97,7 +97,7 @@ namespace KillUpdate
         {
         }
 
-        public void ExecuteCommandHandler(ICommand command)
+        public void OnExecuteCommand(ICommand command)
         {
             MenuHandlerTable[command]();
         }
@@ -140,7 +140,7 @@ namespace KillUpdate
             get { return LoadEmbeddedResource<Bitmap>("Kill-Update.png"); }
         }
 
-        public void IconClicked()
+        public void OnIconClicked()
         {
         }
 
@@ -158,6 +158,14 @@ namespace KillUpdate
                 else
                     return "Lock/Unlock Windows updates (Requires administrator mode)";
             }
+        }
+
+        public void OnActivated()
+        {
+        }
+
+        public void OnDeactivated()
+        {
         }
 
         public bool CanClose(bool canClose)
