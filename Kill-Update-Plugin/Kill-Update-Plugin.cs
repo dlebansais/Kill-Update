@@ -8,6 +8,7 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
+using TaskbarIconHost;
 
 namespace KillUpdate
 {
@@ -16,12 +17,12 @@ namespace KillUpdate
         #region Plugin
         public string Name
         {
-            get { return "Kill-Update"; }
+            get { return PluginDetails.Name; }
         }
 
         public Guid Guid
         {
-            get { return new Guid("{5293D078-E9B9-4E5D-AD4C-489A017748A5}"); }
+            get { return PluginDetails.Guid; }
         }
 
         public bool RequireElevated
