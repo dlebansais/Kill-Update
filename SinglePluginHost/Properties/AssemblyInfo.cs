@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Insta-Unblock")]
-[assembly: AssemblyDescription("Automatically unblock files downloaded from the Internet.")]
+[assembly: AssemblyTitle("Kill-Update")]
+[assembly: AssemblyDescription("Prevents Windows 10 from updating. Can be manually disabled when updating is convenient.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Insta-Unblock")]
+[assembly: AssemblyProduct("Kill-Update")]
 [assembly: AssemblyCopyright("Copyright ©  2018 David Le Bansais")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -51,7 +51,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.22")]
-[assembly: AssemblyFileVersion("1.0.0.21")]
+[assembly: AssemblyVersion("1.0.0.24")]
+[assembly: AssemblyFileVersion("1.0.0.23")]
 [assembly: NeutralResourcesLanguage("en-US")]
 

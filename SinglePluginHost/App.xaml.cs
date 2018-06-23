@@ -325,7 +325,7 @@ namespace TaskbarIconHost
                 AddSeparator = true;
 
                 ItemCollection SubmenuItems;
-                if (PluginMenuList.Count > 1 && FullPluginMenuList.Count > 0)
+                if (PluginMenuList.Count > 1 && FullPluginMenuList.Count > 1)
                 {
                     MenuItem PluginSubmenu = new MenuItem();
                     PluginSubmenu.Header = PluginName;
