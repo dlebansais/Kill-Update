@@ -68,6 +68,6 @@
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>call "$(SolutionDir)updateversion.bat" "$(SolutionDir)" "$(SolutionPath)"</PreBuildEvent>
+    <PreBuildEvent>call "$(SolutionDir)updateversion.bat" "$(SolutionDir)" "$(SolutionPath)" "$(SolutionDir)SinglePluginHost\SinglePluginHost.csproj"</PreBuildEvent>
   </PropertyGroup>
 </Project>
