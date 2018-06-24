@@ -10,21 +10,23 @@ namespace TaskbarIconHost
     public partial class LoadAtStartupWindow : Window
     {
         #region Init
-        public LoadAtStartupWindow(bool requireElevated)
+        public LoadAtStartupWindow(bool requireElevated, string appName)
         {
             InitializeComponent();
             DataContext = this;
 
             RequireElevated = requireElevated;
+            Title = appName;
+            TaskSelectiontext = $"Select the task called '{appName}.xml' (this is a simple text file that you can inspect).";
 
             try
             {
-                string ApplicationFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TaskbarIconHost");
+                string ApplicationFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName);
 
                 if (!Directory.Exists(ApplicationFolder))
                     Directory.CreateDirectory(ApplicationFolder);
 
-                TaskFile = Path.Combine(ApplicationFolder, "TaskbarIconHost.xml");
+                TaskFile = Path.Combine(ApplicationFolder, appName + ".xml");
 
                 if (!File.Exists(TaskFile))
                 {
@@ -42,8 +44,7 @@ namespace TaskbarIconHost
                                         using (StreamWriter sw = new StreamWriter(fs))
                                         {
                                             string Content = sr.ReadToEnd();
-                                            string Location = Path.GetDirectoryName(ExecutingAssembly.Location);
-                                            Content = Content.Replace("%PATH%", Location);
+                                            Content = Content.Replace("%PATH%", ExecutingAssembly.Location);
                                             sw.WriteLine(Content);
                                         }
                                     }
@@ -61,6 +62,7 @@ namespace TaskbarIconHost
         }
 
         public bool RequireElevated { get; private set; }
+        public string TaskSelectiontext { get; private set; }
 
         private string TaskFile;
         #endregion

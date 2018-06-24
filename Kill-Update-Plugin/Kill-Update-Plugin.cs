@@ -66,7 +66,10 @@ namespace KillUpdate
 
         public bool GetIsMenuChanged()
         {
-            return false;
+            bool Result = IsMenuChanged;
+            IsMenuChanged = false;
+
+            return Result;
         }
 
         public string GetMenuHeader(ICommand command)
@@ -109,6 +112,7 @@ namespace KillUpdate
 
             Settings.SetSettingBool(LockedSettingName, LockIt);
             ChangeLockMode(LockIt);
+            IsMenuChanged = true;
         }
 
         public bool GetIsIconChanged()
@@ -214,6 +218,7 @@ namespace KillUpdate
         private Dictionary<ICommand, Func<bool>> MenuIsCheckedTable = new Dictionary<ICommand, Func<bool>>();
         private Dictionary<ICommand, Action> MenuHandlerTable = new Dictionary<ICommand, Action>();
         private bool IsIconChanged;
+        private bool IsMenuChanged;
         #endregion
 
         #region Service Manager

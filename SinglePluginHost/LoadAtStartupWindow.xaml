@@ -2,7 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:conv="clr-namespace:Converters"
-        Title="Taskbar Icon Host"
         ResizeMode="NoResize"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
@@ -54,7 +53,7 @@
             <TextBlock Grid.Column="0" Grid.Row="3" Text="•&#x0a;" VerticalAlignment="Center" Margin="5,10,0,0"/>
             <TextBlock Grid.Column="1" Grid.Row="3" TextAlignment="Justify" TextWrapping="Wrap" Margin="5,10,0,0">From the Task Scheduler, right-click on 'Task Scheduler Library' (below the menu) and select "Import Task..."</TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="4" Text="•&#x0a;" VerticalAlignment="Center" Margin="5,10,0,0"/>
-            <TextBlock Grid.Column="1" Grid.Row="4" TextAlignment="Justify" TextWrapping="Wrap" Margin="5,10,0,0">Select the task called 'TaskbarIconHost.xml' (this is a simple text file that you can inspect).</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TaskSelectiontext}" TextAlignment="Justify" TextWrapping="Wrap" Margin="5,10,0,0"/>
             <Button Grid.Column="2" Grid.Row="4" Command="{StaticResource CopyCommand}" VerticalAlignment="Top" Width="120" Height="24" Margin="10,10,0,0">Copy Address</Button>
             <TextBlock Grid.Column="0" Grid.Row="5" Text="•&#x0a;" VerticalAlignment="Center" Margin="5,10,0,0">
                 <TextBlock.Visibility>
@@ -71,7 +70,7 @@
                     <Binding Path="RequireElevated" Converter="{StaticResource convBooleanToObject}" ConverterParameter="{StaticResource HiddenVisible}"/>
                 </TextBlock.Visibility>
             </TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="5" Text="The Task Scheduler asks you to review the task. Since one of the plugins require administrator mode, check the 'Run with highest privileges' box, then click 'OK', and this program will be restarted every time someone logs in." TextAlignment="Justify" TextWrapping="Wrap" VerticalAlignment="Center" Margin="5,10,0,0">
+            <TextBlock Grid.Column="1" Grid.Row="5" Text="The Task Scheduler asks you to review the task. Since this application requires administrator mode, check the 'Run with highest privileges' box, then click 'OK', and this program will be restarted every time someone logs in." TextAlignment="Justify" TextWrapping="Wrap" VerticalAlignment="Center" Margin="5,10,0,0">
                 <TextBlock.Visibility>
                     <Binding Path="RequireElevated" Converter="{StaticResource convBooleanToObject}" ConverterParameter="{StaticResource HiddenVisible}"/>
                 </TextBlock.Visibility>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -10,11 +7,16 @@ namespace TaskbarIconHost
     public partial class RemoveFromStartupWindow : Window
     {
         #region Init
-        public RemoveFromStartupWindow()
+        public RemoveFromStartupWindow(string appName)
         {
             InitializeComponent();
             DataContext = this;
+
+            Title = appName;
+            TaskSelectiontext = $"From the Task Scheduler, select 'Task Scheduler Library' and search for the task called '{appName}'.";
         }
+
+        public string TaskSelectiontext { get; private set; }
         #endregion
 
         #region Events
