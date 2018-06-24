@@ -3,7 +3,7 @@ using System;
 
 namespace TaskbarIconHost
 {
-    public class PluginSettings : MarshalByRefObject, IPluginSettings
+    public class PluginSettings : IPluginSettings
     {
         #region Init
         public PluginSettings(string pluginName, IPluginLogger logger)

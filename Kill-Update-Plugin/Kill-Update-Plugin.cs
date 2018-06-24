@@ -12,7 +12,7 @@ using TaskbarIconHost;
 
 namespace KillUpdate
 {
-    public class KillUpdatePlugin : MarshalByRefObject, TaskbarIconHost.IPluginClient
+    public class KillUpdatePlugin : TaskbarIconHost.IPluginClient
     {
         #region Plugin
         public string Name

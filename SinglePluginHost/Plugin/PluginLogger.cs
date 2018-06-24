@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace TaskbarIconHost
 {
-    public class PluginLogger : MarshalByRefObject, IPluginLogger
+    public class PluginLogger : IPluginLogger
     {
         public void AddLog(string text)
         {
