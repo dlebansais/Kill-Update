@@ -74,6 +74,21 @@ namespace TaskbarIconHost
                 SetSettingKey(valueName, value, RegistryValueKind.String);
         }
 
+        public double GetSettingDouble(string valueName, double defaultValue)
+        {
+            string StringValue = GetSettingKey(valueName) as string;
+            if (StringValue != null && double.TryParse(StringValue, out double value))
+                return value;
+            else
+                return defaultValue;
+        }
+
+        public void SetSettingDouble(string valueName, double value)
+        {
+            string StringValue = value.ToString();
+            SetSettingKey(valueName, StringValue, RegistryValueKind.String);
+        }
+
         private object GetSettingKey(string valueName)
         {
             try
