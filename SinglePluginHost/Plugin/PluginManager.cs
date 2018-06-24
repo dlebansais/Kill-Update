@@ -213,6 +213,22 @@ namespace TaskbarIconHost
 
         private static bool IsModuleSigned(Module module)
         {
+            for (int i = 0; i < 3; i++)
+                if (IsModuleSignedOneTry(module))
+                    return true;
+                else if (!IsWakeUpDelayElapsed)
+                {
+                    Thread.Sleep(5000);
+                    IsWakeUpDelayElapsed = true;
+                }
+                else
+                    return false;
+
+            return false;
+        }
+
+        private static bool IsModuleSignedOneTry(Module module)
+        {
             try
             {
                 X509Certificate certificate = module.GetSignerCertificate();
@@ -477,5 +493,6 @@ namespace TaskbarIconHost
         private static readonly string SharedPluginAssemblyName = "TaskbarIconShared";
         private static Type PluginInterfaceType;
         private static Dictionary<Assembly, List<IPluginClient>> LoadedPluginTable = new Dictionary<Assembly, List<IPluginClient>>();
+        private static bool IsWakeUpDelayElapsed;
     }
 }
