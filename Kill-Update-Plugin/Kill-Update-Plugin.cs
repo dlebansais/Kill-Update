@@ -64,7 +64,7 @@ namespace KillUpdate
 
         public List<ICommand> CommandList { get; private set; } = new List<ICommand>();
 
-        public bool GetIsMenuChanged()
+        public bool GetIsMenuChanged(bool beforeMenuOpening)
         {
             bool Result = IsMenuChanged;
             IsMenuChanged = false;
