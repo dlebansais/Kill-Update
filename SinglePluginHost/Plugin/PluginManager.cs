@@ -353,13 +353,13 @@ namespace TaskbarIconHost
         public static Dictionary<ICommand, IPluginClient> CommandTable { get; } = new Dictionary<ICommand, IPluginClient>();
         public static Dictionary<List<ICommand>, string> FullCommandList { get; } = new Dictionary<List<ICommand>, string>();
 
-        public static List<ICommand> GetChangedCommands()
+        public static List<ICommand> GetChangedCommands(bool beforeMenuOpening)
         {
             List<ICommand> Result = new List<ICommand>();
 
             foreach (KeyValuePair<Assembly, List<IPluginClient>> Entry in LoadedPluginTable)
                 foreach (IPluginClient Plugin in Entry.Value)
-                    if (Plugin.GetIsMenuChanged())
+                    if (Plugin.GetIsMenuChanged(false))
                     {
                         foreach (KeyValuePair<ICommand, IPluginClient> CommandEntry in CommandTable)
                             if (CommandEntry.Value == Plugin)

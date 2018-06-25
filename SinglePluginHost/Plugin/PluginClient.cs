@@ -33,9 +33,9 @@ namespace TaskbarIconHost
 
         public List<ICommand> CommandList { get { return PluginManager.PluginProperty<List<ICommand>>(PluginHandle, nameof(IPluginClient.CommandList)); } }
 
-        public bool GetIsMenuChanged()
+        public bool GetIsMenuChanged(bool beforeMenuOpening)
         {
-            return PluginManager.GetPluginFunctionValue<bool>(PluginHandle, nameof(IPluginClient.GetIsMenuChanged));
+            return PluginManager.GetPluginFunctionValue<bool>(PluginHandle, nameof(IPluginClient.GetIsMenuChanged), beforeMenuOpening);
         }
 
         public string GetMenuHeader(ICommand Command)
@@ -110,9 +110,8 @@ namespace TaskbarIconHost
 
         public void BeginClose()
         {
-            if (InstanceEvent != null)
+            using (EventWaitHandle EventWaitHandle = InstanceEvent)
             {
-                InstanceEvent.Close();
                 InstanceEvent = null;
             }
 

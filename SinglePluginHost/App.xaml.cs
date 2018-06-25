@@ -479,14 +479,16 @@ namespace TaskbarIconHost
             }
 
             // Update the menu with latest news from plugins.
-            UpdateMenu();
+            UpdateMenu(true);
 
             PluginManager.OnMenuOpening();
         }
 
-        private void UpdateMenu()
+        private void UpdateMenu(bool beforeMenuOpening)
         {
-            foreach (ICommand Command in PluginManager.GetChangedCommands())
+            List<ICommand> ChangedCommandList = PluginManager.GetChangedCommands(beforeMenuOpening);
+
+            foreach (ICommand Command in ChangedCommandList)
             {
                 // Update changed menus with their new state.
                 bool MenuIsVisible = PluginManager.GetMenuIsVisible(Command);
@@ -590,7 +592,7 @@ namespace TaskbarIconHost
             if (GetIsIconOrToolTipChanged())
                 UpdateIconAndToolTip();
 
-            UpdateMenu();
+            UpdateMenu(false);
         }
 
         private void OnCommandSelectPreferred(object sender, ExecutedRoutedEventArgs e)
