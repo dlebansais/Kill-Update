@@ -134,7 +134,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\UAC-16.png" />
+    <EmbeddedResource Include="Resources\UAC-16.png" />
     <Resource Include="Resources\main.ico" />
     <EmbeddedResource Include="Resources\TaskbarIconHost.xml" />
     <Content Include="Scheduler\Microsoft.Win32.TaskScheduler.dll" />
