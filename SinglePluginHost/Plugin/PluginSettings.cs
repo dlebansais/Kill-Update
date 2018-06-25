@@ -3,7 +3,7 @@ using System;
 
 namespace TaskbarIconHost
 {
-    public class PluginSettings : IPluginSettings
+    public class PluginSettings : IPluginSettings, IDisposable
     {
         #region Init
         public PluginSettings(string pluginName, IPluginLogger logger)
@@ -125,6 +125,34 @@ namespace TaskbarIconHost
 
         private IPluginLogger Logger;
         private RegistryKey SettingKey;
+        #endregion
+
+        #region Implementation of IDisposable
+        protected virtual void Dispose(bool isDisposing)
+        {
+            if (isDisposing)
+                DisposeNow();
+        }
+
+        private void DisposeNow()
+        {
+            if (SettingKey != null)
+            {
+                SettingKey.Dispose();
+                SettingKey = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~PluginSettings()
+        {
+            Dispose(false);
+        }
         #endregion
     }
 }

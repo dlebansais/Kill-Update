@@ -21,6 +21,7 @@ namespace TaskbarIconHost
 
             try
             {
+                // Create a script in the plugin folder. This script can be imported to create a new task.
                 string ApplicationFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName);
 
                 if (!Directory.Exists(ApplicationFolder))
@@ -32,6 +33,7 @@ namespace TaskbarIconHost
                 {
                     Assembly ExecutingAssembly = Assembly.GetExecutingAssembly();
 
+                    // The TaskbarIconHost.xml file must be added to the project has an "Embedded Reource".
                     foreach (string ResourceName in ExecutingAssembly.GetManifestResourceNames())
                         if (ResourceName.EndsWith("TaskbarIconHost.xml"))
                         {
@@ -44,6 +46,8 @@ namespace TaskbarIconHost
                                         using (StreamWriter sw = new StreamWriter(fs))
                                         {
                                             string Content = sr.ReadToEnd();
+
+                                            // Use the complete path to the plugin.
                                             Content = Content.Replace("%PATH%", ExecutingAssembly.Location);
                                             sw.WriteLine(Content);
                                         }
@@ -70,6 +74,7 @@ namespace TaskbarIconHost
         #region Events
         private void OnLaunch(object sender, ExecutedRoutedEventArgs e)
         {
+            // Launch the Windows Task Scheduler.
             Process ControlProcess = new Process();
             ControlProcess.StartInfo.FileName = "control.exe";
             ControlProcess.StartInfo.Arguments = "schedtasks";
@@ -80,6 +85,7 @@ namespace TaskbarIconHost
 
         private void OnCopy(object sender, ExecutedRoutedEventArgs e)
         {
+            // Copy to the clipboard the full path to the script to import.
             Clipboard.SetText(TaskFile);
         }
 

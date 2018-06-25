@@ -22,6 +22,7 @@ namespace TaskbarIconHost
         #region Events
         private void OnLaunch(object sender, ExecutedRoutedEventArgs e)
         {
+            // Launch the Windows Task Scheduler.
             Process ControlProcess = new Process();
             ControlProcess.StartInfo.FileName = "control.exe";
             ControlProcess.StartInfo.Arguments = "schedtasks";

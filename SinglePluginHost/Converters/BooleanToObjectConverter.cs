@@ -12,6 +12,7 @@ namespace Converters
             bool BoolValue = (bool)value;
             CompositeCollection CollectionOfItems = parameter as CompositeCollection;
 
+            // Return the first or second object of a collection depending on a bool value.
             return CollectionOfItems[BoolValue ? 1 : 0];
         }
 
