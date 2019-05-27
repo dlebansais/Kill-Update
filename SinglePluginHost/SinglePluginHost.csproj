@@ -76,7 +76,7 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="TaskbarIconShared">
-      <HintPath>..\Kill-Update-Plugin\TaskbarIconHost\TaskbarIconShared.dll</HintPath>
+      <HintPath>..\Kill-Update-Plugin\TaskbarIconHost\$(Platform)\TaskbarIconShared.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
