@@ -268,6 +268,8 @@ namespace KillUpdate
 
             try
             {
+                Logger.AddLog("Running timer callback");
+
                 ServiceStartMode? PreviousStartType = StartType;
                 bool LockIt = IsSettingLock;
 
