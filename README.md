@@ -20,7 +20,7 @@ To upgrade manually, first uncheck the Locked menu (see above), then open Window
 
 You can log activity to a file. To turn on logging:
 
-+ Create a text file called `settings.txt`.
++ Create a text file called `settings.txt` in the same folder as the program.
 + In this file, add a line with the path to the log file. You can choose the destination folder and file name.
 + Start the program. This should immediately add a few lines to the log file.
 
