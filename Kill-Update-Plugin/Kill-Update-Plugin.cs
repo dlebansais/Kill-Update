@@ -264,34 +264,54 @@ namespace KillUpdate
         private delegate void OnUpdateHandler();
         private void OnUpdate()
         {
-            UpdateWatch.Restart();
-
             try
             {
-                Logger.AddLog("Running timer callback");
+                Logger.AddLog("%% Running timer callback");
+
+                UpdateWatch.Restart();
+
+                Logger.AddLog("Watch restarted");
+
+                Settings.RenewKey();
+
+                Logger.AddLog("Key renewed");
 
                 ServiceStartMode? PreviousStartType = StartType;
                 bool LockIt = IsSettingLock;
 
+                Logger.AddLog("Lock setting read");
+
                 ServiceController[] Services = ServiceController.GetServices();
+                if (Services == null)
+                    Logger.AddLog("Failed to get services");
+                else
+                {
+                    Logger.AddLog($"Found {Services.Length} service(s)");
 
-                foreach (ServiceController Service in Services)
-                    if (Service.ServiceName == WindowsUpdateServiceName)
-                    {
-                        StartType = Service.StartType;
-
-                        if (PreviousStartType.HasValue && PreviousStartType.Value != StartType.Value)
+                    foreach (ServiceController Service in Services)
+                        if (Service.ServiceName == WindowsUpdateServiceName)
                         {
-                            Logger.AddLog("Start type changed");
+                            Logger.AddLog($"Checking {Service.ServiceName}");
 
-                            ChangeLockMode(Service, LockIt);
+                            StartType = Service.StartType;
+
+                            Logger.AddLog($"Current start type: {StartType}");
+
+                            if (PreviousStartType.HasValue && PreviousStartType.Value != StartType.Value)
+                            {
+                                Logger.AddLog("Start type changed");
+
+                                ChangeLockMode(Service, LockIt);
+                            }
+
+                            StopIfRunning(Service, LockIt);
+
+                            PreviousStartType = StartType;
+                            break;
                         }
+                }
 
-                        StopIfRunning(Service, LockIt);
-
-                        PreviousStartType = StartType;
-                        break;
-                    }
+                Logger.AddLog("%% Timer callback completed");
             }
             catch (Exception e)
             {
@@ -332,6 +352,7 @@ namespace KillUpdate
         {
             if (lockIt && Service.Status == ServiceControllerStatus.Running && Service.CanStop)
             {
+                Logger.AddLog("Stopping service");
                 Service.Stop();
                 Logger.AddLog("Service stopped");
             }
@@ -339,7 +360,7 @@ namespace KillUpdate
 
         private static readonly string WindowsUpdateServiceName = "wuauserv";
         private static readonly string LockedSettingName = "Locked";
-        private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(10);
+        private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
         private ServiceStartMode? StartType;
         private Timer UpdateTimer;
         private Stopwatch UpdateWatch;

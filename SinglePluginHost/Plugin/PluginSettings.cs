@@ -8,19 +8,14 @@ namespace TaskbarIconHost
         #region Init
         public PluginSettings(string pluginName, IPluginLogger logger)
         {
+            PluginName = pluginName;
             Logger = logger;
 
             try
             {
                 Logger.AddLog("InitSettings starting");
 
-                RegistryKey Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
-                Key = Key.CreateSubKey("TaskbarIconHost");
-
-                if (pluginName != null)
-                    SettingKey = Key.CreateSubKey("Settings-" + pluginName);
-                else
-                    SettingKey = Key.CreateSubKey("Main Settings");
+                OpenPluginKey();
 
                 Logger.AddLog("InitSettings done");
             }
@@ -29,9 +24,39 @@ namespace TaskbarIconHost
                 Logger.AddLog($"(from InitSettings) {e.Message}");
             }
         }
+
+        private void ClosePluginKey()
+        {
+            if (SettingKey != null)
+            {
+                SettingKey.Dispose();
+                SettingKey = null;
+            }
+        }
+
+        private void OpenPluginKey()
+        {
+            RegistryKey Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
+            Key = Key.CreateSubKey("TaskbarIconHost");
+
+            if (PluginName != null)
+                SettingKey = Key.CreateSubKey("Settings-" + PluginName);
+            else
+                SettingKey = Key.CreateSubKey("Main Settings");
+        }
+        #endregion
+
+        #region Properties
+        public string PluginName { get; }
         #endregion
 
         #region Settings
+        public void RenewKey()
+        {
+            ClosePluginKey();
+            OpenPluginKey();
+        }
+
         public bool IsBoolKeySet(string valueName)
         {
             int? value = GetSettingKey(valueName) as int?;
@@ -136,11 +161,7 @@ namespace TaskbarIconHost
 
         private void DisposeNow()
         {
-            if (SettingKey != null)
-            {
-                SettingKey.Dispose();
-                SettingKey = null;
-            }
+            ClosePluginKey();
         }
 
         public void Dispose()
