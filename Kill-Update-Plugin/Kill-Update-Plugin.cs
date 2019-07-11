@@ -233,12 +233,14 @@ namespace KillUpdate
                     StartType = ServiceStartMode.Manual;
 
             UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
+            FullRestartTimer = new Timer(new TimerCallback(FullRestartTimerCallback));
             UpdateWatch = new Stopwatch();
+            UpdateWatch.Start();
 
             OnUpdate();
 
             UpdateTimer.Change(CheckInterval, CheckInterval);
-            UpdateWatch.Start();
+            FullRestartTimer.Change(FullRestartInterval, Timeout.InfiniteTimeSpan);
 
             Logger.AddLog("InitServiceManager done");
         }
@@ -248,6 +250,8 @@ namespace KillUpdate
 
         private void StopServiceManager()
         {
+            FullRestartTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            FullRestartTimer = null;
             UpdateTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
             UpdateTimer = null;
         }
@@ -255,11 +259,43 @@ namespace KillUpdate
         private void UpdateTimerCallback(object parameter)
         {
             // Protection against reentering too many times after a sleep/wake up.
-            if (UpdateWatch.Elapsed.Seconds < CheckInterval.Seconds / 2)
+            // There must be at most two pending calls to OnUpdate in the dispatcher.
+            int NewTimerDispatcherCount = Interlocked.Increment(ref TimerDispatcherCount);
+            if (NewTimerDispatcherCount > 2)
+            {
+                Interlocked.Decrement(ref TimerDispatcherCount);
                 return;
+            }
+
+            // For debug purpose.
+            LastTotalElapsed = Math.Round(UpdateWatch.Elapsed.TotalSeconds, 0);
 
             Dispatcher.BeginInvoke(new OnUpdateHandler(OnUpdate));
         }
+
+        private void FullRestartTimerCallback(object parameter)
+        {
+            if (UpdateTimer != null)
+            {
+                Logger.AddLog("Restarting the timer");
+
+                // Restart the update timer from scratch.
+                UpdateTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+
+                UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
+                UpdateTimer.Change(CheckInterval, CheckInterval);
+
+                Logger.AddLog("Timer restarted");
+            }
+            else
+                Logger.AddLog("No timer to restart");
+
+            FullRestartTimer.Change(FullRestartInterval, Timeout.InfiniteTimeSpan);
+            Logger.AddLog($"Next check scheduled at {DateTime.UtcNow + FullRestartInterval}");
+        }
+
+        private int TimerDispatcherCount = 1;
+        private double LastTotalElapsed = double.NaN;
 
         private delegate void OnUpdateHandler();
         private void OnUpdate()
@@ -268,9 +304,10 @@ namespace KillUpdate
             {
                 Logger.AddLog("%% Running timer callback");
 
+                int LastTimerDispatcherCount = Interlocked.Decrement(ref TimerDispatcherCount);
                 UpdateWatch.Restart();
 
-                Logger.AddLog("Watch restarted");
+                Logger.AddLog($"Watch restarted, Elapsed = {LastTotalElapsed}, pending count = {LastTimerDispatcherCount}");
 
                 Settings.RenewKey();
 
@@ -361,8 +398,10 @@ namespace KillUpdate
         private static readonly string WindowsUpdateServiceName = "wuauserv";
         private static readonly string LockedSettingName = "Locked";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
+        private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
         private ServiceStartMode? StartType;
         private Timer UpdateTimer;
+        private Timer FullRestartTimer;
         private Stopwatch UpdateWatch;
         #endregion
     }
