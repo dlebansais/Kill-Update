@@ -393,12 +393,18 @@ namespace KillUpdate
         #endregion
 
         #region Zombification
+        private static bool IsRestart { get { return Zombification.IsRestart; } }
+
         private void InitZombification()
         {
             App.AddLog("InitZombification starting");
 
+            if (IsRestart)
+                App.AddLog("This process has been restarted");
+
             Zombification = new Zombification("Kill-Update");
             Zombification.Delay = TimeSpan.FromMinutes(1);
+            Zombification.Flags = Flags.NoWindow | Flags.ForwardArguments;
             Zombification.ZombifyMe();
 
             App.AddLog("InitZombification done");
@@ -465,6 +471,8 @@ namespace KillUpdate
         {
             App.AddLog("Exiting application");
 
+            ExitZombification();
+
             StopServiceManager();
 
             if (InstanceEvent != null)
@@ -477,8 +485,6 @@ namespace KillUpdate
             {
                 TaskbarIcon = null;
             }
-
-            ExitZombification();
 
             App.AddLog("Done");
         }
