@@ -81,14 +81,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>call "$(SolutionDir)updateversion.bat" "$(SolutionDir)" "$(SolutionPath)" "$(SolutionDir)SinglePluginHost\SinglePluginHost.csproj"</PreBuildEvent>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PreBuildEvent>call "$(SolutionDir)updateversion.bat" "$(SolutionDir)" "$(SolutionPath)" "$(SolutionDir)SinglePluginHost\SinglePluginHost.csproj"</PreBuildEvent>
     <PostBuildEvent>call "$(SolutionDir)updatecommit.bat" "$(SolutionDir)" "$(TargetPath)"</PostBuildEvent>
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PreBuildEvent>call "$(SolutionDir)updateversion.bat" "$(SolutionDir)" "$(SolutionPath)" "$(SolutionDir)SinglePluginHost\SinglePluginHost.csproj"</PreBuildEvent>
     <PostBuildEvent>call "$(SolutionDir)updatecommit.bat" "$(SolutionDir)" "$(TargetPath)"
 if exist "$(SolutionDir)signfile.bat" call "$(SolutionDir)signfile.bat" "$(SolutionDir)" "$(Configuration)-$(Platform)" "$(TargetPath)"</PostBuildEvent>
     <OutputPath>bin\x64\Release\</OutputPath>
