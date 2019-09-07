@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using TaskbarTools;
 using System.Diagnostics;
 using System.Globalization;
+using ZombifyMe;
 
 namespace KillUpdate
 {
@@ -391,6 +392,34 @@ namespace KillUpdate
         private Dictionary<ICommand, string> MenuHeaderTable;
         #endregion
 
+        #region Zombification
+        private void InitZombification()
+        {
+            App.AddLog("InitZombification starting");
+
+            Zombification = new Zombification("Kill-Update");
+            Zombification.Delay = TimeSpan.FromMinutes(1);
+            Zombification.ZombifyMe();
+
+            App.AddLog("InitZombification done");
+        }
+
+        private void ExitZombification()
+        {
+            App.AddLog("ExitZombification starting");
+
+            if (Zombification != null)
+            {
+                Zombification.Cancel();
+                Zombification = null;
+            }
+
+            App.AddLog("ExitZombification done");
+        }
+
+        private Zombification Zombification;
+        #endregion
+
         #region Events
         private void OnStartup(object sender, StartupEventArgs e)
         {
@@ -398,6 +427,7 @@ namespace KillUpdate
 
             InitServiceManager();
             InitTaskbarIcon();
+            InitZombification();
 
             Exit += OnExit;
         }
@@ -447,6 +477,8 @@ namespace KillUpdate
             {
                 TaskbarIcon = null;
             }
+
+            ExitZombification();
 
             App.AddLog("Done");
         }

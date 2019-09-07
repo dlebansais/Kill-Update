@@ -52,6 +52,9 @@
       <HintPath>TaskbarIconHost\$(Platform)\TaskbarIconShared.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="ZombifyMe">
+      <HintPath>..\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Kill-Update-Plugin.cs" />
