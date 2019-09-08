@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
 using TaskbarIconHost;
+using ZombifyMe;
 
 namespace KillUpdate
 {
@@ -49,6 +50,8 @@ namespace KillUpdate
                               isEnabledHandler: () => StartType.HasValue && IsElevated,
                               isCheckedHandler: () => IsLockEnabled,
                               commandHandler: OnCommandLock);
+
+            InitZombification();
         }
 
         private void InitializeCommand(string header, Func<bool> isVisibleHandler, Func<bool> isEnabledHandler, Func<bool> isCheckedHandler, Action commandHandler)
@@ -180,6 +183,7 @@ namespace KillUpdate
 
         public void BeginClose()
         {
+            ExitZombification();
             StopServiceManager();
         }
 
@@ -348,6 +352,8 @@ namespace KillUpdate
                         }
                 }
 
+                Zombification?.SetAlive();
+
                 Logger.AddLog("%% Timer callback completed");
             }
             catch (Exception e)
@@ -403,6 +409,44 @@ namespace KillUpdate
         private Timer UpdateTimer;
         private Timer FullRestartTimer;
         private Stopwatch UpdateWatch;
+        #endregion
+
+        #region Zombification
+        private static bool IsRestart { get { return Zombification.IsRestart; } }
+
+        private void InitZombification()
+        {
+            Logger.AddLog("InitZombification starting");
+
+            if (IsRestart)
+                Logger.AddLog("This process has been restarted");
+
+            Zombification = new Zombification("Kill-Update");
+            Zombification.Delay = TimeSpan.FromMinutes(1);
+            Zombification.WatchingMessage = null;
+            Zombification.RestartMessage = null;
+            Zombification.Flags = Flags.NoWindow | Flags.ForwardArguments;
+            Zombification.IsSymetric = true;
+            Zombification.AliveTimeout = TimeSpan.FromMinutes(1);
+            Zombification.ZombifyMe();
+
+            Logger.AddLog("InitZombification done");
+        }
+
+        private void ExitZombification()
+        {
+            Logger.AddLog("ExitZombification starting");
+
+            if (Zombification != null)
+            {
+                Zombification.Cancel();
+                Zombification = null;
+            }
+
+            Logger.AddLog("ExitZombification done");
+        }
+
+        private Zombification Zombification;
         #endregion
     }
 }
