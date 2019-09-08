@@ -13,20 +13,24 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
+		Travis|x64 = Travis|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Debug|x64.ActiveCfg = Debug|x64
 		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Debug|x64.Build.0 = Debug|x64
 		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Release|x64.ActiveCfg = Release|x64
 		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Release|x64.Build.0 = Release|x64
+		{82665A13-754F-4EA3-ABA7-0561AB862F20}.Travis|x64.ActiveCfg = Release|x64
 		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Debug|x64.ActiveCfg = Debug|x64
 		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Debug|x64.Build.0 = Debug|x64
 		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Release|x64.ActiveCfg = Release|x64
 		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Release|x64.Build.0 = Release|x64
+		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Travis|x64.ActiveCfg = Release|x64
 		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Debug|x64.ActiveCfg = Debug|x64
 		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Debug|x64.Build.0 = Debug|x64
 		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.ActiveCfg = Release|x64
 		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.Build.0 = Release|x64
+		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Travis|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
