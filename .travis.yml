@@ -1,2 +1,5 @@
 language: csharp
 solution: Kill-Update.sln
+
+script:
+- msbuild Kill-Update.sln /p:Configuration=Travis
