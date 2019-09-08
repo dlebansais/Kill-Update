@@ -404,7 +404,11 @@ namespace KillUpdate
 
             Zombification = new Zombification("Kill-Update");
             Zombification.Delay = TimeSpan.FromMinutes(1);
+            Zombification.WatchingMessage = null;
+            Zombification.RestartMessage = null;
             Zombification.Flags = Flags.NoWindow | Flags.ForwardArguments;
+            Zombification.IsSymetric = true;
+            Zombification.AliveTimeout = TimeSpan.FromMinutes(1);
             Zombification.ZombifyMe();
 
             App.AddLog("InitZombification done");
@@ -556,6 +560,8 @@ namespace KillUpdate
                         PreviousStartType = StartType;
                         break;
                     }
+
+                Zombification?.SetAlive();
             }
             catch (Exception e)
             {

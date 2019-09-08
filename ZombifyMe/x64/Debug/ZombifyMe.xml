@@ -59,6 +59,11 @@
             True if the main process should also watch on the monitoring process to restart it.
             </summary>
         </member>
+        <member name="P:ZombifyMe.Monitoring.AliveTimeout">
+            <summary>
+            Gets and sets the timeout for the main thread to notify it's alive.
+            </summary>
+        </member>
         <member name="P:ZombifyMe.Monitoring.MonitorProcess">
             <summary>
             The monitoring process.
@@ -157,6 +162,11 @@
             True if the main process should also watch on the monitoring process to restart it.
             </summary>
         </member>
+        <member name="P:ZombifyMe.Zombification.AliveTimeout">
+            <summary>
+            Gets and sets the timeout for the main thread to notify it's alive.
+            </summary>
+        </member>
         <member name="P:ZombifyMe.Zombification.LastError">
             <summary>
             The last error encountered by <see cref="M:ZombifyMe.Zombification.ZombifyMe"/>.
@@ -171,6 +181,11 @@
         <member name="M:ZombifyMe.Zombification.Cancel">
             <summary>
             Cancels the monitoring of a process.
+            </summary>
+        </member>
+        <member name="M:ZombifyMe.Zombification.SetAlive">
+            <summary>
+            Tells the monitoring thread the main thread is alive.
             </summary>
         </member>
         <member name="M:ZombifyMe.Zombification.StartSymetricWatch(ZombifyMe.Monitoring)">
