@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ZombifyMe</name>
+    </assembly>
+    <members>
+        <member name="T:ZombifyMe.Errors">
+            <summary>
+            Errors reported by the ZombifyMe API.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Errors.Success">
+            <summary>
+            The call was successful.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Errors.UnableToLoadSource">
+            <summary>
+            An internal resource could not be loaded.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Errors.MonitorNotStarted">
+            <summary>
+            The monitoring process could not be started.
+            </summary>
+        </member>
+        <member name="T:ZombifyMe.Monitoring">
+            <summary>
+            Contains information about how a process should be monitored.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.ClientName">
+            <summary>
+            Gets the name of the client.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.Delay">
+            <summary>
+            Gets and sets the delay between when a process has crashed and when it's restarted.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.WatchingMessage">
+            <summary>
+            Message to display when watching begins.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.RestartMessage">
+            <summary>
+            Message to display after a process is restarted.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.Flags">
+            <summary>
+            Flags for the restarted process.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.IsSymetric">
+            <summary>
+            True if the main process should also watch on the monitoring process to restart it.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.MonitorProcess">
+            <summary>
+            The monitoring process.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.CancelEvent">
+            <summary>
+            The event used to cancel monitoring.
+            </summary>
+        </member>
+        <member name="T:ZombifyMe.Flags">
+            <summary>
+            Flags that indicate how a process should be restarted.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Flags.None">
+            <summary>
+            The 'no flags' value.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Flags.NoWindow">
+            <summary>
+            If set, the process is restarted without a new console window.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Flags.ForwardArguments">
+            <summary>
+            If set, the same arguments of the original process are reused for the restarted process.
+            </summary>
+        </member>
+        <member name="T:ZombifyMe.Shared">
+            <summary>
+            Provides common definitions for the ZombifyMe library and the monitoring program.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Shared.CancelEventName">
+            <summary>
+            Unique name to use for the cancellation event.
+            </summary>
+        </member>
+        <member name="F:ZombifyMe.Shared.RestartEnvironmentVariable">
+            <summary>
+            Name of the environment variable to use to indicate a process is a restarted one.
+            </summary>
+        </member>
+        <member name="M:ZombifyMe.Shared.GetCancelEventName(System.String)">
+            <summary>
+            Gets the unique name of the cancellation event for a given client.
+            </summary>
+            <param name="clientName">The client name.</param>
+            <returns>The complete event name.</returns>
+        </member>
+        <member name="T:ZombifyMe.Zombification">
+            <summary>
+            This class provides an API to restart a process after it has crashed.
+            </summary>
+        </member>
+        <member name="M:ZombifyMe.Zombification.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZombifyMe.Zombification"/> class.
+            </summary>
+            <param name="clientName">Name of the client.</param>
+        </member>
+        <member name="P:ZombifyMe.Zombification.IsRestart">
+            <summary>
+            True if the current process is a restarted one.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.ClientName">
+            <summary>
+            Gets the name of the client.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.Delay">
+            <summary>
+            Gets and sets the delay between when a process has crashed and when it's restarted.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.WatchingMessage">
+            <summary>
+            Message to display when watching begins.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.RestartMessage">
+            <summary>
+            Message to display after a process is restarted.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.Flags">
+            <summary>
+            Flags for the restarted process.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.IsSymetric">
+            <summary>
+            True if the main process should also watch on the monitoring process to restart it.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.LastError">
+            <summary>
+            The last error encountered by <see cref="M:ZombifyMe.Zombification.ZombifyMe"/>.
+            </summary>
+        </member>
+        <member name="M:ZombifyMe.Zombification.ZombifyMe">
+            <summary>
+            Installs the monitor.
+            </summary>
+            <returns>True if successful; False otherwise and <see cref="P:ZombifyMe.Zombification.LastError"/> contains the error.</returns>
+        </member>
+        <member name="M:ZombifyMe.Zombification.Cancel">
+            <summary>
+            Cancels the monitoring of a process.
+            </summary>
+        </member>
+        <member name="M:ZombifyMe.Zombification.StartSymetricWatch(ZombifyMe.Monitoring)">
+            <summary>
+            Starts a thread to ensure the monitoring process is restarted if it crashed.
+            </summary>
+            <param name="monitoring">Monitoring parameters.</param>
+        </member>
+        <member name="M:ZombifyMe.Zombification.ExecuteSymetricWatch(System.Object)">
+            <summary>
+            Ensures the monitoring process is restarted if it crashed.
+            </summary>
+            <param name="parameter">The monitoring process.</param>
+        </member>
+        <member name="M:ZombifyMe.Zombification.LoadMonitor(System.String@)">
+            <summary>
+            Loads the first executable in resources and write it down to a temporary file.
+            </summary>
+            <param name="fileName">The executable file name upon return.</param>
+            <returns>True if the file could be loaded and copied.</returns>
+        </member>
+        <member name="M:ZombifyMe.Zombification.LoadMonitor(System.IO.Stream,System.String@)">
+            <summary>
+            Writes down a stream to a temporary file.
+            </summary>
+            <param name="resourceStream">The stream to copy.</param>
+            <param name="fileName">The executable file name upon return.</param>
+            <returns>True if the file could be loaded and copied.</returns>
+        </member>
+    </members>
+</doc>
