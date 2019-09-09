@@ -109,6 +109,11 @@
             Name of the environment variable to use to indicate a process is a restarted one.
             </summary>
         </member>
+        <member name="F:ZombifyMe.Shared.CheckInterval">
+            <summary>
+            The period for checking if a process has disappeared.
+            </summary>
+        </member>
         <member name="M:ZombifyMe.Shared.GetCancelEventName(System.String)">
             <summary>
             Gets the unique name of the cancellation event for a given client.
