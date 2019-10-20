@@ -11,7 +11,7 @@ Right-click the icon to pop a menu with the following items:
 - Exit
 
 # How does it work?
-Every 10 seconds, this application checks the Windows Update service, and is not disabled, disables it.
+Every 10 seconds, this application checks the Windows Update service, and if not disabled, disables it.
 
 # Manually upgrading Windows
 To upgrade manually, first uncheck the Locked menu (see above), then open Windows settings and check for updates. When they have been installed and the computer has rebooted, you can check the Locked menu again.
@@ -24,7 +24,7 @@ You can log activity to a file. To turn on logging:
 + In this file, add a line with the path to the log file. You can choose the destination folder and file name.
 + Start the program. This should immediately add a few lines to the log file.
 
-Note that this file grows with time, but very slowly.
+Note that this file grows with time, but slowly.
 
 If you have an issue with this program, you can add the log file to your bug report.
 
