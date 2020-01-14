@@ -11,13 +11,13 @@ public static class ServiceHelper
         UInt32 nServiceType,
         UInt32 nStartType,
         UInt32 nErrorControl,
-        String lpBinaryPathName,
-        String lpLoadOrderGroup,
+        string? lpBinaryPathName,
+        string? lpLoadOrderGroup,
         IntPtr lpdwTagId,
-        [In] char[] lpDependencies,
-        String lpServiceStartName,
-        String lpPassword,
-        String lpDisplayName);
+        [In] char[]? lpDependencies,
+        string? lpServiceStartName,
+        string? lpPassword,
+        string? lpDisplayName);
 
     [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     static extern IntPtr OpenService(
@@ -25,7 +25,7 @@ public static class ServiceHelper
 
     [DllImport("advapi32.dll", EntryPoint = "OpenSCManagerW", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr OpenSCManager(
-        string machineName, string databaseName, uint dwAccess);
+        string? machineName, string? databaseName, uint dwAccess);
 
     [DllImport("advapi32.dll", EntryPoint = "CloseServiceHandle")]
     public static extern int CloseServiceHandle(IntPtr hSCObject);
