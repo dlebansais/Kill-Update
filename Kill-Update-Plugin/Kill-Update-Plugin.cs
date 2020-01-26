@@ -9,7 +9,6 @@ using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
 using TaskbarIconHost;
-using ZombifyMe;
 
 namespace KillUpdate
 {
@@ -352,7 +351,7 @@ namespace KillUpdate
                         }
                 }
 
-                Zombification?.SetAlive();
+                ZombifyMe.Zombification.SetAlive();
 
                 Logger.AddLog("%% Timer callback completed");
             }
@@ -412,7 +411,7 @@ namespace KillUpdate
         #endregion
 
         #region Zombification
-        private static bool IsRestart { get { return Zombification.IsRestart; } }
+        private static bool IsRestart { get { return ZombifyMe.Zombification.IsRestart; } }
 
         private void InitZombification()
         {
@@ -421,12 +420,12 @@ namespace KillUpdate
             if (IsRestart)
                 Logger.AddLog("This process has been restarted");
 
-            Zombification = new Zombification("Kill-Update");
+            Zombification = new ZombifyMe.Zombification("Kill-Update");
             Zombification.Delay = TimeSpan.FromMinutes(1);
             Zombification.WatchingMessage = null;
             Zombification.RestartMessage = null;
-            Zombification.Flags = Flags.NoWindow | Flags.ForwardArguments;
-            Zombification.IsSymetric = true;
+            Zombification.Flags = ZombifyMe.Flags.NoWindow | ZombifyMe.Flags.ForwardArguments;
+            Zombification.IsSymmetric = true;
             Zombification.AliveTimeout = TimeSpan.FromMinutes(1);
             Zombification.ZombifyMe();
 
@@ -446,7 +445,7 @@ namespace KillUpdate
             Logger.AddLog("ExitZombification done");
         }
 
-        private Zombification Zombification;
+        private ZombifyMe.Zombification Zombification;
         #endregion
     }
 }

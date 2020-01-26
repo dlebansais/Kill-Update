@@ -54,7 +54,7 @@
             Flags for the restarted process.
             </summary>
         </member>
-        <member name="P:ZombifyMe.Monitoring.IsSymetric">
+        <member name="P:ZombifyMe.Monitoring.IsSymmetric">
             <summary>
             True if the main process should also watch on the monitoring process to restart it.
             </summary>
@@ -62,6 +62,11 @@
         <member name="P:ZombifyMe.Monitoring.AliveTimeout">
             <summary>
             Gets and sets the timeout for the main thread to notify it's alive.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Monitoring.MonitorFolder">
+            <summary>
+            Folder where to put the monitoring processes. If empty, the temporary folder is used.
             </summary>
         </member>
         <member name="P:ZombifyMe.Monitoring.MonitorProcess">
@@ -94,27 +99,27 @@
             If set, the same arguments of the original process are reused for the restarted process.
             </summary>
         </member>
-        <member name="T:ZombifyMe.Shared">
+        <member name="T:ZombifyMe.SharedDefinitions">
             <summary>
             Provides common definitions for the ZombifyMe library and the monitoring program.
             </summary>
         </member>
-        <member name="F:ZombifyMe.Shared.CancelEventName">
+        <member name="F:ZombifyMe.SharedDefinitions.CancelEventName">
             <summary>
             Unique name to use for the cancellation event.
             </summary>
         </member>
-        <member name="F:ZombifyMe.Shared.RestartEnvironmentVariable">
+        <member name="F:ZombifyMe.SharedDefinitions.RestartEnvironmentVariable">
             <summary>
             Name of the environment variable to use to indicate a process is a restarted one.
             </summary>
         </member>
-        <member name="F:ZombifyMe.Shared.CheckInterval">
+        <member name="F:ZombifyMe.SharedDefinitions.CheckInterval">
             <summary>
             The period for checking if a process has disappeared.
             </summary>
         </member>
-        <member name="M:ZombifyMe.Shared.GetCancelEventName(System.String)">
+        <member name="M:ZombifyMe.SharedDefinitions.GetCancelEventName(System.String)">
             <summary>
             Gets the unique name of the cancellation event for a given client.
             </summary>
@@ -136,6 +141,7 @@
             <summary>
             True if the current process is a restarted one.
             </summary>
+            <exception cref="T:System.Security.SecurityException">The caller does not have read permission for process environment variables.</exception>
         </member>
         <member name="P:ZombifyMe.Zombification.ClientName">
             <summary>
@@ -162,7 +168,7 @@
             Flags for the restarted process.
             </summary>
         </member>
-        <member name="P:ZombifyMe.Zombification.IsSymetric">
+        <member name="P:ZombifyMe.Zombification.IsSymmetric">
             <summary>
             True if the main process should also watch on the monitoring process to restart it.
             </summary>
@@ -170,6 +176,11 @@
         <member name="P:ZombifyMe.Zombification.AliveTimeout">
             <summary>
             Gets and sets the timeout for the main thread to notify it's alive.
+            </summary>
+        </member>
+        <member name="P:ZombifyMe.Zombification.MonitorFolder">
+            <summary>
+            Folder where to put the monitoring processes. If empty, the temporary folder is used.
             </summary>
         </member>
         <member name="P:ZombifyMe.Zombification.LastError">
@@ -193,29 +204,39 @@
             Tells the monitoring thread the main thread is alive.
             </summary>
         </member>
-        <member name="M:ZombifyMe.Zombification.StartSymetricWatch(ZombifyMe.Monitoring)">
+        <member name="M:ZombifyMe.Zombification.StartSymmetricWatch(ZombifyMe.Monitoring)">
             <summary>
             Starts a thread to ensure the monitoring process is restarted if it crashed.
             </summary>
             <param name="monitoring">Monitoring parameters.</param>
         </member>
-        <member name="M:ZombifyMe.Zombification.ExecuteSymetricWatch(System.Object)">
+        <member name="M:ZombifyMe.Zombification.ExecuteSymmetricWatch(System.Object)">
             <summary>
             Ensures the monitoring process is restarted if it crashed.
             </summary>
             <param name="parameter">The monitoring process.</param>
         </member>
-        <member name="M:ZombifyMe.Zombification.LoadMonitor(System.String@)">
+        <member name="M:ZombifyMe.Zombification.ExecuteSymmetricWatch(ZombifyMe.Monitoring,System.Diagnostics.Process,System.Threading.EventWaitHandle)">
+            <summary>
+            Ensures the monitoring process is restarted if it crashed.
+            </summary>
+            <param name="monitoring">The monitoring information.</param>
+            <param name="monitorProcess">The monitoring process.</param>
+            <param name="cancelEvent">The cancellation event.</param>
+        </member>
+        <member name="M:ZombifyMe.Zombification.LoadMonitor(System.String,System.String@)">
             <summary>
             Loads the first executable in resources and write it down to a temporary file.
             </summary>
+            <param name="monitorFolder">Folder where to write the file.</param>
             <param name="fileName">The executable file name upon return.</param>
             <returns>True if the file could be loaded and copied.</returns>
         </member>
-        <member name="M:ZombifyMe.Zombification.LoadMonitor(System.IO.Stream,System.String@)">
+        <member name="M:ZombifyMe.Zombification.LoadMonitor(System.String,System.IO.Stream,System.String@)">
             <summary>
             Writes down a stream to a temporary file.
             </summary>
+            <param name="monitorFolder">Folder where to write the file.</param>
             <param name="resourceStream">The stream to copy.</param>
             <param name="fileName">The executable file name upon return.</param>
             <returns>True if the file could be loaded and copied.</returns>

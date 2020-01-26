@@ -16,7 +16,6 @@ using System.Windows.Threading;
 using TaskbarTools;
 using System.Diagnostics;
 using System.Globalization;
-using ZombifyMe;
 
 namespace KillUpdate
 {
@@ -393,7 +392,7 @@ namespace KillUpdate
         #endregion
 
         #region Zombification
-        private static bool IsRestart { get { return Zombification.IsRestart; } }
+        private static bool IsRestart { get { return ZombifyMe.Zombification.IsRestart; } }
 
         private void InitZombification()
         {
@@ -402,12 +401,12 @@ namespace KillUpdate
             if (IsRestart)
                 App.AddLog("This process has been restarted");
 
-            Zombification = new Zombification("Kill-Update");
+            Zombification = new ZombifyMe.Zombification("Kill-Update");
             Zombification.Delay = TimeSpan.FromMinutes(1);
             Zombification.WatchingMessage = null;
             Zombification.RestartMessage = null;
-            Zombification.Flags = Flags.NoWindow | Flags.ForwardArguments;
-            Zombification.IsSymetric = true;
+            Zombification.Flags = ZombifyMe.Flags.NoWindow | ZombifyMe.Flags.ForwardArguments;
+            Zombification.IsSymmetric = true;
             Zombification.AliveTimeout = TimeSpan.FromMinutes(1);
             Zombification.ZombifyMe();
 
@@ -427,7 +426,7 @@ namespace KillUpdate
             App.AddLog("ExitZombification done");
         }
 
-        private Zombification Zombification;
+        private ZombifyMe.Zombification Zombification;
         #endregion
 
         #region Events
@@ -561,7 +560,7 @@ namespace KillUpdate
                         break;
                     }
 
-                Zombification?.SetAlive();
+                ZombifyMe.Zombification.SetAlive();
             }
             catch (Exception e)
             {
