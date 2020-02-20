@@ -59,5 +59,23 @@ namespace KillUpdate.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load at startup.
+        /// </summary>
+        internal static string LoadAtStartupHeader {
+            get {
+                return ResourceManager.GetString("LoadAtStartupHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from startup.
+        /// </summary>
+        internal static string RemoveFromStartupHeader {
+            get {
+                return ResourceManager.GetString("RemoveFromStartupHeader", resourceCulture);
+            }
+        }
     }
 }

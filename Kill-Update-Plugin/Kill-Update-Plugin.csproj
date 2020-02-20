@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Kill-Update-Plugin.cs" />
     <Compile Include="PluginDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

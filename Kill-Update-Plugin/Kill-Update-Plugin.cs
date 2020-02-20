@@ -12,7 +12,8 @@ using TaskbarIconHost;
 
 namespace KillUpdate
 {
-    public class KillUpdatePlugin : TaskbarIconHost.IPluginClient
+#pragma warning disable CS8618 // Non-nullable property is uninitialized
+    public class KillUpdatePlugin : TaskbarIconHost.IPluginClient, IDisposable
     {
         #region Plugin
         public string Name
@@ -94,7 +95,7 @@ namespace KillUpdate
             return MenuIsCheckedTable[command]();
         }
 
-        public Bitmap GetMenuIcon(ICommand command)
+        public Bitmap? GetMenuIcon(ICommand command)
         {
             return null;
         }
@@ -198,21 +199,24 @@ namespace KillUpdate
 
         private T LoadEmbeddedResource<T>(string resourceName)
         {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string ResourcePath = string.Empty;
+
             // Loads an "Embedded Resource" of type T (ex: Bitmap for a PNG file).
-            foreach (string ResourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames())
-                if (ResourceName.EndsWith(resourceName))
-                {
-                    using (Stream rs = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
-                    {
-                        T Result = (T)Activator.CreateInstance(typeof(T), rs);
-                        Logger.AddLog($"Resource {resourceName} loaded");
+            // Make sure the resource is tagged as such in the resource properties.
+            foreach (string Item in assembly.GetManifestResourceNames())
+                if (Item.EndsWith(resourceName, StringComparison.InvariantCulture))
+                    ResourcePath = Item;
 
-                        return Result;
-                    }
-                }
+            // If not found, it could be because it's not tagged as "Embedded Resource".
+            if (ResourcePath.Length == 0)
+                Logger.AddLog($"Resource {resourceName} not found");
 
-            Logger.AddLog($"Resource {resourceName} not found");
-            return default(T);
+            using Stream rs = assembly.GetManifestResourceStream(ResourcePath);
+            T Result = (T)Activator.CreateInstance(typeof(T), rs);
+            Logger.AddLog($"Resource {resourceName} loaded");
+
+            return Result;
         }
 
         private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
@@ -254,9 +258,7 @@ namespace KillUpdate
         private void StopServiceManager()
         {
             FullRestartTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            FullRestartTimer = null;
             UpdateTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            UpdateTimer = null;
         }
 
         private void UpdateTimerCallback(object parameter)
@@ -384,7 +386,7 @@ namespace KillUpdate
         {
             IsIconChanged = true;
             ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
-            ServiceHelper.ChangeStartMode(Service, NewStartType);
+            NativeMethods.ChangeStartMode(Service, NewStartType, out _);
 
             StartType = NewStartType;
             Logger.AddLog($"Service type={StartType}");
@@ -400,8 +402,8 @@ namespace KillUpdate
             }
         }
 
-        private static readonly string WindowsUpdateServiceName = "wuauserv";
-        private static readonly string LockedSettingName = "Locked";
+        private const string WindowsUpdateServiceName = "wuauserv";
+        private const string LockedSettingName = "Locked";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
         private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
         private ServiceStartMode? StartType;
@@ -422,8 +424,8 @@ namespace KillUpdate
 
             Zombification = new ZombifyMe.Zombification("Kill-Update");
             Zombification.Delay = TimeSpan.FromMinutes(1);
-            Zombification.WatchingMessage = null;
-            Zombification.RestartMessage = null;
+            Zombification.WatchingMessage = string.Empty;
+            Zombification.RestartMessage = string.Empty;
             Zombification.Flags = ZombifyMe.Flags.NoWindow | ZombifyMe.Flags.ForwardArguments;
             Zombification.IsSymmetric = true;
             Zombification.AliveTimeout = TimeSpan.FromMinutes(1);
@@ -436,16 +438,66 @@ namespace KillUpdate
         {
             Logger.AddLog("ExitZombification starting");
 
-            if (Zombification != null)
-            {
-                Zombification.Cancel();
-                Zombification = null;
-            }
+            Zombification.Cancel();
 
             Logger.AddLog("ExitZombification done");
         }
 
         private ZombifyMe.Zombification Zombification;
         #endregion
+
+        #region Implementation of IDisposable
+        /// <summary>
+        /// Called when an object should release its resources.
+        /// </summary>
+        /// <param name="isDisposing">Indicates if resources must be disposed now.</param>
+        protected virtual void Dispose(bool isDisposing)
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                if (isDisposing)
+                    DisposeNow();
+            }
+        }
+
+        /// <summary>
+        /// Called when an object should release its resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="KillUpdatePlugin"/> class.
+        /// </summary>
+        ~KillUpdatePlugin()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// True after <see cref="Dispose(bool)"/> has been invoked.
+        /// </summary>
+        private bool IsDisposed = false;
+
+        /// <summary>
+        /// Disposes of every reference that must be cleaned up.
+        /// </summary>
+        private void DisposeNow()
+        {
+            using (UpdateTimer)
+            {
+            }
+
+            using (FullRestartTimer)
+            {
+            }
+        }
+        #endregion
     }
+#pragma warning restore CS8618 // Non-nullable property is uninitialized
 }

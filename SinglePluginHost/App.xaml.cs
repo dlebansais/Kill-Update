@@ -267,24 +267,23 @@ namespace TaskbarIconHost
         private T LoadEmbeddedResource<T>(string resourceName)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
+            string ResourcePath = string.Empty;
 
             // Loads an "Embedded Resource" of type T (ex: Bitmap for a PNG file).
             // Make sure the resource is tagged as such in the resource properties.
-            foreach (string ResourceName in assembly.GetManifestResourceNames())
-                if (ResourceName.EndsWith(resourceName))
-                {
-                    using (Stream rs = assembly.GetManifestResourceStream(ResourceName))
-                    {
-                        T Result = (T)Activator.CreateInstance(typeof(T), rs);
-                        Logger.AddLog($"Resource {resourceName} loaded");
-
-                        return Result;
-                    }
-                }
+            foreach (string Item in assembly.GetManifestResourceNames())
+                if (Item.EndsWith(resourceName, StringComparison.InvariantCulture))
+                    ResourcePath = Item;
 
             // If not found, it could be because it's not tagged as "Embedded Resource".
-            Logger.AddLog($"Resource {resourceName} not found");
-            return default(T);
+            if (ResourcePath.Length == 0)
+                Logger.AddLog($"Resource {resourceName} not found");
+
+            using Stream rs = assembly.GetManifestResourceStream(ResourcePath);
+            T Result = (T)Activator.CreateInstance(typeof(T), rs);
+            Logger.AddLog($"Resource {resourceName} loaded");
+
+            return Result;
         }
 
         private ContextMenu LoadContextMenu()
@@ -340,7 +339,7 @@ namespace TaskbarIconHost
                         bool MenuIsVisible = PluginManager.GetMenuIsVisible(Command);
                         bool MenuIsEnabled = PluginManager.GetMenuIsEnabled(Command);
                         bool MenuIsChecked = PluginManager.GetMenuIsChecked(Command);
-                        Bitmap MenuIcon = PluginManager.GetMenuIcon(Command);
+                        Bitmap? MenuIcon = PluginManager.GetMenuIcon(Command);
 
                         MenuItem PluginMenu = CreateMenuItem(Command, MenuHeader, MenuIsChecked, MenuIcon);
                         TaskbarIcon.PrepareMenuItem(PluginMenu, MenuIsVisible, MenuIsEnabled);
@@ -449,7 +448,7 @@ namespace TaskbarIconHost
             }
         }
 
-        private MenuItem CreateMenuItem(ICommand command, string header, bool isChecked, Bitmap icon)
+        private MenuItem CreateMenuItem(ICommand command, string header, bool isChecked, Bitmap? icon)
         {
             MenuItem Result = new MenuItem();
             Result.Header = header;
@@ -498,7 +497,7 @@ namespace TaskbarIconHost
                     TaskbarIcon.SetMenuHeader(Command, PluginManager.GetMenuHeader(Command));
                     TaskbarIcon.SetMenuIsEnabled(Command, PluginManager.GetMenuIsEnabled(Command));
 
-                    Bitmap MenuIcon = PluginManager.GetMenuIcon(Command);
+                    Bitmap? MenuIcon = PluginManager.GetMenuIcon(Command);
                     if (MenuIcon != null)
                     {
                         TaskbarIcon.SetMenuIsChecked(Command, false);

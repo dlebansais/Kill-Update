@@ -19,7 +19,7 @@ using System.Globalization;
 
 namespace KillUpdate
 {
-    public partial class App : Application
+    public partial class App : Application, IDisposable
     {
         #region Init
         static App()
@@ -29,6 +29,7 @@ namespace KillUpdate
             InitSettings();
         }
 
+#pragma warning disable CS8618 // Non-nullable property is uninitialized
         public App()
         {
             // Ensure only one instance is running at a time.
@@ -57,8 +58,9 @@ namespace KillUpdate
             Startup += OnStartup;
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
+#pragma warning restore CS8618 // Non-nullable property is uninitialized
 
-        private EventWaitHandle InstanceEvent;
+        private EventWaitHandle? InstanceEvent = null;
         #endregion
 
         #region Properties
@@ -119,7 +121,7 @@ namespace KillUpdate
             }
         }
 
-        private static object GetSettingKey(string valueName)
+        private static object? GetSettingKey(string valueName)
         {
             try
             {
@@ -183,8 +185,8 @@ namespace KillUpdate
 
         public static string GetSettingString(string valueName, string defaultValue)
         {
-            string value = GetSettingKey(valueName) as string;
-            return value != null ? value : defaultValue;
+            string? value = GetSettingKey(valueName) as string;
+            return value ?? defaultValue;
         }
 
         public static void SetSettingString(string valueName, string value)
@@ -195,7 +197,7 @@ namespace KillUpdate
                 SetSettingKey(valueName, value, RegistryValueKind.String);
         }
 
-        private static RegistryKey SettingKey = null;
+        private static RegistryKey? SettingKey = null;
         #endregion
 
         #region Taskbar Icon
@@ -208,8 +210,7 @@ namespace KillUpdate
             LockCommand = InitMenuCommand("LockCommand", "Locked", OnCommandLock);
             ExitCommand = InitMenuCommand("ExitCommand", "Exit", OnCommandExit);
 
-            Icon Icon;
-            ContextMenu ContextMenu = LoadContextMenu(out Icon);
+            ContextMenu ContextMenu = LoadContextMenu(out Icon Icon);
 
             TaskbarIcon = TaskbarIcon.Create(Icon, ToolTipText, ContextMenu, ContextMenu);
             TaskbarIcon.MenuOpening += OnMenuOpening;
@@ -219,7 +220,7 @@ namespace KillUpdate
 
         private ICommand InitMenuCommand(string commandName, string header, ExecutedRoutedEventHandler executed)
         {
-            ICommand Command = FindResource(commandName) as ICommand;
+            ICommand Command = (ICommand)FindResource(commandName);
             MenuHeaderTable.Add(Command, header);
 
             // Bind the command to the corresponding handler. Requires the menu to be the target of notifications in TaskbarIcon.
@@ -228,42 +229,42 @@ namespace KillUpdate
             return Command;
         }
 
-        private Icon LoadIcon(string iconName)
+        private static Icon LoadIcon(string iconName)
         {
-            // Loads an "Embedded Resource" icon.
-            foreach (string ResourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames())
-                if (ResourceName.EndsWith(iconName))
-                {
-                    using (Stream rs = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
-                    {
-                        Icon Result = new Icon(rs);
-                        App.AddLog($"Resource {iconName} loaded");
+            string ResourceName = GetResourceName(iconName);
 
-                        return Result;
-                    }
-                }
+            using (Stream ResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
+            {
+                Icon Result = new Icon(ResourceStream);
+                App.AddLog($"Resource {iconName} loaded");
 
-            App.AddLog($"Resource {iconName} not found");
-            return null;
+                return Result;
+            }
         }
 
-        private Bitmap LoadBitmap(string bitmapName)
+        private static Bitmap LoadBitmap(string bitmapName)
         {
-            // Loads an "Embedded Resource" bitmap.
-            foreach (string ResourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames())
-                if (ResourceName.EndsWith(bitmapName))
-                {
-                    using (Stream rs = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
-                    {
-                        Bitmap Result = new Bitmap(rs);
-                        App.AddLog($"Resource {bitmapName} loaded");
+            string ResourceName = GetResourceName(bitmapName);
 
-                        return Result;
-                    }
-                }
+            using (Stream ResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
+            {
+                Bitmap Result = new Bitmap(ResourceStream);
+                App.AddLog($"Resource {bitmapName} loaded");
 
-            App.AddLog($"Resource {bitmapName} not found");
-            return null;
+                return Result;
+            }
+        }
+
+        private static string GetResourceName(string name)
+        {
+            string ResourceName = string.Empty;
+
+            // Loads an "Embedded Resource".
+            foreach (string Item in Assembly.GetExecutingAssembly().GetManifestResourceNames())
+                if (Item.EndsWith(name, StringComparison.InvariantCulture))
+                    ResourceName = Item;
+
+            return ResourceName;
         }
 
         private ContextMenu LoadContextMenu(out Icon Icon)
@@ -343,7 +344,7 @@ namespace KillUpdate
             return Result;
         }
 
-        private MenuItem LoadNotificationMenuItem(ICommand command, string header)
+        private static MenuItem LoadNotificationMenuItem(ICommand command, string header)
         {
             MenuItem Result = new MenuItem();
             Result.Header = header;
@@ -353,13 +354,13 @@ namespace KillUpdate
             return Result;
         }
 
-        private void AddContextMenu(ContextMenu menu, MenuItem item, bool isVisible, bool isEnabled)
+        private static void AddContextMenu(ContextMenu menu, MenuItem item, bool isVisible, bool isEnabled)
         {
             TaskbarIcon.PrepareMenuItem(item, isVisible, isEnabled);
             menu.Items.Add(item);
         }
 
-        private void AddContextMenuSeparator(ContextMenu menu)
+        private static void AddContextMenuSeparator(ContextMenu menu)
         {
             menu.Items.Add(new Separator());
         }
@@ -368,7 +369,7 @@ namespace KillUpdate
         {
             App.AddLog("OnMenuOpening");
 
-            TaskbarIcon SenderIcon = sender as TaskbarIcon;
+            TaskbarIcon SenderIcon = (TaskbarIcon)sender;
             string ExeName = Assembly.GetExecutingAssembly().Location;
 
             if (IsElevated)
@@ -382,9 +383,9 @@ namespace KillUpdate
             }
         }
 
-        public TaskbarIcon TaskbarIcon { get; private set; }
-        private static readonly string LoadAtStartupHeader = "Load at startup";
-        private static readonly string RemoveFromStartupHeader = "Remove from startup";
+        internal TaskbarIcon TaskbarIcon { get; private set; }
+        private string LoadAtStartupHeader { get { return (string)TryFindResource("LoadAtStartupHeader"); } }
+        private string RemoveFromStartupHeader { get { return (string)TryFindResource("RemoveFromStartupHeader"); } }
         private ICommand LoadAtStartupCommand;
         private ICommand LockCommand;
         private ICommand ExitCommand;
@@ -403,8 +404,8 @@ namespace KillUpdate
 
             Zombification = new ZombifyMe.Zombification("Kill-Update");
             Zombification.Delay = TimeSpan.FromMinutes(1);
-            Zombification.WatchingMessage = null;
-            Zombification.RestartMessage = null;
+            Zombification.WatchingMessage = string.Empty;
+            Zombification.RestartMessage = string.Empty;
             Zombification.Flags = ZombifyMe.Flags.NoWindow | ZombifyMe.Flags.ForwardArguments;
             Zombification.IsSymmetric = true;
             Zombification.AliveTimeout = TimeSpan.FromMinutes(1);
@@ -417,11 +418,7 @@ namespace KillUpdate
         {
             App.AddLog("ExitZombification starting");
 
-            if (Zombification != null)
-            {
-                Zombification.Cancel();
-                Zombification = null;
-            }
+            Zombification.Cancel();
 
             App.AddLog("ExitZombification done");
         }
@@ -484,9 +481,8 @@ namespace KillUpdate
                 InstanceEvent = null;
             }
 
-            using (TaskbarIcon Icon = TaskbarIcon)
+            using (TaskbarIcon)
             {
-                TaskbarIcon = null;
             }
 
             App.AddLog("Done");
@@ -504,12 +500,9 @@ namespace KillUpdate
                 else
                     StartType = ServiceStartMode.Manual;
 
-            UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
-            UpdateWatch = new Stopwatch();
-
             OnUpdate();
 
-            UpdateTimer.Change(CheckInterval, CheckInterval);
+            UpdateTimer = new Timer(UpdateTimerCallback, this, CheckInterval, CheckInterval);
             UpdateWatch.Start();
 
             App.AddLog("InitServiceManager done");
@@ -518,7 +511,6 @@ namespace KillUpdate
         private void StopServiceManager()
         {
             UpdateTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            UpdateTimer = null;
         }
 
         private void UpdateTimerCallback(object parameter)
@@ -574,7 +566,7 @@ namespace KillUpdate
 
             try
             {
-                ServiceController Service = new ServiceController(WindowsUpdateServiceName);
+                using ServiceController Service = new ServiceController(WindowsUpdateServiceName);
 
                 if (IsElevated)
                     ChangeLockMode(Service, lockIt);
@@ -590,13 +582,13 @@ namespace KillUpdate
         private void ChangeLockMode(ServiceController Service, bool lockIt)
         {
             ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
-            ServiceHelper.ChangeStartMode(Service, NewStartType);
+            NativeMethods.ChangeStartMode(Service, NewStartType, out _);
 
             StartType = NewStartType;
             App.AddLog($"Service type={StartType}");
         }
 
-        private void StopIfRunning(ServiceController Service, bool lockIt)
+        private static void StopIfRunning(ServiceController Service, bool lockIt)
         {
             if (lockIt && Service.Status == ServiceControllerStatus.Running && Service.CanStop)
             {
@@ -605,11 +597,11 @@ namespace KillUpdate
             }
         }
 
-        private static readonly string WindowsUpdateServiceName = "wuauserv";
+        private const string WindowsUpdateServiceName = "wuauserv";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(10);
         private ServiceStartMode? StartType;
-        private Timer UpdateTimer;
-        private Stopwatch UpdateWatch;
+        private Timer UpdateTimer = new Timer((object parameter) => { });
+        private Stopwatch UpdateWatch = new Stopwatch();
         #endregion
 
         #region Load at startup
@@ -625,11 +617,64 @@ namespace KillUpdate
         #endregion
 
         #region Debugging
-        public static void AddLog(string text)
+        public static void AddLog(string logText)
         {
             DateTime UtcNow = DateTime.UtcNow;
-            string TimeLog = UtcNow.ToString(CultureInfo.InvariantCulture) + UtcNow.Millisecond.ToString("D3");
-            Debug.WriteLine($"KillUpdate - {TimeLog}: {text}");
+            string TimeLog = UtcNow.ToString(CultureInfo.InvariantCulture) + UtcNow.Millisecond.ToString("D3", CultureInfo.InvariantCulture);
+            Debug.WriteLine($"KillUpdate - {TimeLog}: {logText}");
+        }
+        #endregion
+
+        #region Implementation of IDisposable
+        /// <summary>
+        /// Called when an object should release its resources.
+        /// </summary>
+        /// <param name="isDisposing">Indicates if resources must be disposed now.</param>
+        protected virtual void Dispose(bool isDisposing)
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                if (isDisposing)
+                    DisposeNow();
+            }
+        }
+
+        /// <summary>
+        /// Called when an object should release its resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="App"/> class.
+        /// </summary>
+        ~App()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// True after <see cref="Dispose(bool)"/> has been invoked.
+        /// </summary>
+        private bool IsDisposed = false;
+
+        /// <summary>
+        /// Disposes of every reference that must be cleaned up.
+        /// </summary>
+        private void DisposeNow()
+        {
+            using (UpdateTimer)
+            {
+            }
+
+            using (InstanceEvent)
+            {
+            }
         }
         #endregion
     }

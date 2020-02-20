@@ -80,8 +80,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Scheduler.cs" />
     <Compile Include="ServiceHelper.cs" />
+    <Compile Include="Taskbar\IconCreationFailedException.cs" />
+    <Compile Include="Taskbar\InvalidCommandException.cs" />
     <Compile Include="Taskbar\TaskbarIcon.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

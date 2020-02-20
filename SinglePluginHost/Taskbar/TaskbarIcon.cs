@@ -137,7 +137,7 @@ namespace TaskbarTools
         /// </summary>
         /// <param name="command">The command associated to the menu item</param>
         /// <param name="bitmap">The icon to set, as a bitmap, null for no icon</param>
-        public void SetMenuIcon(ICommand command, Bitmap bitmap)
+        public void SetMenuIcon(ICommand command, Bitmap? bitmap)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
             MenuItem.Image = bitmap;

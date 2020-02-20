@@ -393,7 +393,7 @@ namespace TaskbarIconHost
             return Plugin.GetMenuIsChecked(Command);
         }
 
-        public static Bitmap GetMenuIcon(ICommand Command)
+        public static Bitmap? GetMenuIcon(ICommand Command)
         {
             IPluginClient Plugin = CommandTable[Command];
             return Plugin.GetMenuIcon(Command);

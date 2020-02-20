@@ -58,7 +58,7 @@ namespace TaskbarIconHost
             return PluginManager.GetPluginFunctionValue<bool>(PluginHandle, nameof(IPluginClient.GetMenuIsChecked), Command);
         }
 
-        public Bitmap GetMenuIcon(ICommand Command)
+        public Bitmap? GetMenuIcon(ICommand Command)
         {
             return PluginManager.GetPluginFunctionValue<Bitmap>(PluginHandle, nameof(IPluginClient.GetMenuIcon), Command);
         }

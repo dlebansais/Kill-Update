@@ -5,7 +5,7 @@ using System.IO;
 
 namespace SchedulerTools
 {
-    public static class Scheduler
+    internal static class Scheduler
     {
         #region Client Interface
         /// <summary>
@@ -25,9 +25,9 @@ namespace SchedulerTools
                     taskName = taskName.Replace(InvalidChar, ' ');
 
                 // Create a task that launch a program when logging in.
-                TaskService Scheduler = new TaskService();
-                Trigger LogonTrigger = Trigger.CreateTrigger(TaskTriggerType.Logon);
-                ExecAction RunAction = Microsoft.Win32.TaskScheduler.Action.CreateAction(TaskActionType.Execute) as ExecAction;
+                using TaskService Scheduler = new TaskService();
+                using Trigger LogonTrigger = Trigger.CreateTrigger(TaskTriggerType.Logon);
+                using ExecAction RunAction = (ExecAction)Microsoft.Win32.TaskScheduler.Action.CreateAction(TaskActionType.Execute);
                 RunAction.Path = exeName;
 
                 // Try with a task name (mandatory on new versions of Windows)
@@ -93,7 +93,7 @@ namespace SchedulerTools
 
             try
             {
-                TaskService Scheduler = new TaskService();
+                using TaskService Scheduler = new TaskService();
 
                 foreach (Task t in Scheduler.AllTasks)
                 {
@@ -103,11 +103,10 @@ namespace SchedulerTools
                         if (Definition.Actions.Count != 1 || Definition.Triggers.Count != 1)
                             continue;
 
-                        ExecAction AsExecAction;
-                        if ((AsExecAction = Definition.Actions[0] as ExecAction) == null)
+                        if (!(Definition.Actions[0] is ExecAction AsExecAction))
                             continue;
 
-                        if (!AsExecAction.Path.EndsWith(ProgramName) || Path.GetFileName(AsExecAction.Path) != ProgramName)
+                        if (!AsExecAction.Path.EndsWith(ProgramName, StringComparison.InvariantCulture) || Path.GetFileName(AsExecAction.Path) != ProgramName)
                             continue;
 
                         handler(t, ref returnValue);
@@ -123,7 +122,7 @@ namespace SchedulerTools
             }
         }
 
-        private static bool AddTaskToScheduler(TaskService scheduler, string taskName, Trigger logonTrigger, ExecAction runAction, TaskRunLevel runLevel)
+        private static bool AddTaskToScheduler(TaskService scheduler, string? taskName, Trigger logonTrigger, ExecAction runAction, TaskRunLevel runLevel)
         {
             try
             {
