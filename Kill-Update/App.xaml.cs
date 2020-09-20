@@ -210,10 +210,11 @@ namespace KillUpdate
             LockCommand = InitMenuCommand("LockCommand", "Locked", OnCommandLock);
             ExitCommand = InitMenuCommand("ExitCommand", "Exit", OnCommandExit);
 
-            ContextMenu ContextMenu = LoadContextMenu(out Icon Icon);
+            LoadContextMenu(out ContextMenu ContextMenu, out Icon Icon);
+            AppIcon = Icon;
 
-            TaskbarIcon = TaskbarIcon.Create(Icon, ToolTipText, ContextMenu, ContextMenu);
-            TaskbarIcon.MenuOpening += OnMenuOpening;
+            AppTaskbarIcon = TaskbarIcon.Create(AppIcon, ToolTipText, ContextMenu, ContextMenu);
+            AppTaskbarIcon.MenuOpening += OnMenuOpening;
 
             App.AddLog("InitTaskbarIcon done");
         }
@@ -267,9 +268,9 @@ namespace KillUpdate
             return ResourceName;
         }
 
-        private ContextMenu LoadContextMenu(out Icon Icon)
+        private void LoadContextMenu(out ContextMenu contextMenu, out Icon Icon)
         {
-            ContextMenu Result = new ContextMenu();
+            contextMenu = new ContextMenu();
 
             MenuItem LoadAtStartup;
             string ExeName = Assembly.GetExecutingAssembly().Location;
@@ -308,16 +309,14 @@ namespace KillUpdate
                     LockMenu.IsChecked = true;
             }
 
-            AddContextMenu(Result, LoadAtStartup, true, IsElevated);
-            AddContextMenu(Result, LockMenu, true, IsLockEnabled);
-            AddContextMenuSeparator(Result);
-            AddContextMenu(Result, ExitMenu, true, true);
+            AddContextMenu(contextMenu, LoadAtStartup, true, IsElevated);
+            AddContextMenu(contextMenu, LockMenu, true, IsLockEnabled);
+            AddContextMenuSeparator(contextMenu);
+            AddContextMenu(contextMenu, ExitMenu, true, true);
 
             Icon = LoadCurrentIcon(LockMenu.IsChecked);
 
             App.AddLog("Menu created");
-
-            return Result;
         }
 
         private Icon LoadCurrentIcon(bool isLockEnabled)
@@ -372,17 +371,18 @@ namespace KillUpdate
             string ExeName = Assembly.GetExecutingAssembly().Location;
 
             if (IsElevated)
-                TaskbarIcon.SetMenuIsChecked(LoadAtStartupCommand, Scheduler.IsTaskActive(ExeName));
+                TaskbarIcon.SetMenuCheck(LoadAtStartupCommand, Scheduler.IsTaskActive(ExeName));
             else
             {
                 if (Scheduler.IsTaskActive(ExeName))
-                    TaskbarIcon.SetMenuHeader(LoadAtStartupCommand, RemoveFromStartupHeader);
+                    TaskbarIcon.SetMenuText(LoadAtStartupCommand, RemoveFromStartupHeader);
                 else
-                    TaskbarIcon.SetMenuHeader(LoadAtStartupCommand, LoadAtStartupHeader);
+                    TaskbarIcon.SetMenuText(LoadAtStartupCommand, LoadAtStartupHeader);
             }
         }
 
-        internal TaskbarIcon TaskbarIcon { get; private set; }
+        private TaskbarIcon AppTaskbarIcon;
+        private Icon AppIcon;
         private string LoadAtStartupHeader { get { return (string)TryFindResource("LoadAtStartupHeader"); } }
         private string RemoveFromStartupHeader { get { return (string)TryFindResource("RemoveFromStartupHeader"); } }
         private ICommand LoadAtStartupCommand;
@@ -441,7 +441,7 @@ namespace KillUpdate
         {
             App.AddLog("OnCommandLoadAtStartup");
 
-            TaskbarIcon.ToggleMenuIsChecked(LoadAtStartupCommand, out bool Install);
+            TaskbarIcon.ToggleMenuCheck(LoadAtStartupCommand, out bool Install);
             InstallLoad(Install);
         }
 
@@ -449,12 +449,14 @@ namespace KillUpdate
         {
             App.AddLog("OnCommandLock");
 
-            TaskbarIcon.ToggleMenuIsChecked(LockCommand, out bool LockIt);
+            TaskbarIcon.ToggleMenuCheck(LockCommand, out bool LockIt);
             SetSettingBool("Locked", LockIt);
             ChangeLockMode(LockIt);
 
-            Icon Icon = LoadCurrentIcon(LockIt);
-            TaskbarIcon.UpdateIcon(Icon);
+            using Icon OldIcon = AppIcon;
+
+            AppIcon = LoadCurrentIcon(LockIt);
+            AppTaskbarIcon.UpdateIcon(AppIcon);
 
             App.AddLog($"Lock mode: {LockIt}");
         }
@@ -480,7 +482,7 @@ namespace KillUpdate
                 InstanceEvent = null;
             }
 
-            using (TaskbarIcon)
+            using (AppTaskbarIcon)
             {
             }
 
@@ -672,6 +674,14 @@ namespace KillUpdate
             }
 
             using (InstanceEvent)
+            {
+            }
+
+            using (AppTaskbarIcon)
+            {
+            }
+
+            using (AppIcon)
             {
             }
         }

@@ -60,9 +60,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>TaskbarIconHost\$(Platform)\TaskbarIconShared.dll</HintPath>
     </Reference>
+    <Reference Include="TaskbarTools">
+      <HintPath>..\Dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="ZombifyMe">
-      <HintPath>..\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
+      <HintPath>..\Dependencies\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

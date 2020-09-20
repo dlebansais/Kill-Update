@@ -85,6 +85,9 @@
     <Reference Include="TaskbarIconShared">
       <HintPath>..\Kill-Update-Plugin\TaskbarIconHost\$(Platform)\TaskbarIconShared.dll</HintPath>
     </Reference>
+    <Reference Include="TaskbarTools">
+      <HintPath>..\Dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -113,9 +116,6 @@
       <DependentUpon>RemoveFromStartupWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scheduler.cs" />
-    <Compile Include="Taskbar\IconCreationFailedException.cs" />
-    <Compile Include="Taskbar\InvalidCommandException.cs" />
-    <Compile Include="Taskbar\TaskbarIcon.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

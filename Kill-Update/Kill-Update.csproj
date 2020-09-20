@@ -68,11 +68,14 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="TaskbarTools">
+      <HintPath>..\Dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ZombifyMe">
-      <HintPath>..\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
+      <HintPath>..\Dependencies\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +86,6 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Scheduler.cs" />
     <Compile Include="ServiceHelper.cs" />
-    <Compile Include="Taskbar\IconCreationFailedException.cs" />
-    <Compile Include="Taskbar\InvalidCommandException.cs" />
-    <Compile Include="Taskbar\TaskbarIcon.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
