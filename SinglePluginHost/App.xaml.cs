@@ -259,7 +259,7 @@ namespace TaskbarIconHost
         {
             using (TaskbarIcon Icon = AppTaskbarIcon)
             {
-                AppTaskbarIcon = TaskbarIcon.None;
+                AppTaskbarIcon = TaskbarIcon.Empty;
             }
         }
 
@@ -476,13 +476,13 @@ namespace TaskbarIconHost
 
             // Update the load at startup menu with the current state (the user can change it directly in the Task Scheduler at any time).
             if (IsElevated)
-                TaskbarIcon.SetMenuIsChecked(LoadAtStartupCommand, Scheduler.IsTaskActive(ExeName));
+                TaskbarIcon.SetMenuCheck(LoadAtStartupCommand, Scheduler.IsTaskActive(ExeName));
             else
             {
                 if (Scheduler.IsTaskActive(ExeName))
-                    TaskbarIcon.SetMenuHeader(LoadAtStartupCommand, RemoveFromStartupHeader);
+                    TaskbarIcon.SetMenuText(LoadAtStartupCommand, RemoveFromStartupHeader);
                 else
-                    TaskbarIcon.SetMenuHeader(LoadAtStartupCommand, LoadAtStartupHeader);
+                    TaskbarIcon.SetMenuText(LoadAtStartupCommand, LoadAtStartupHeader);
             }
 
             // Update the menu with latest news from plugins.
@@ -502,17 +502,17 @@ namespace TaskbarIconHost
                 if (MenuIsVisible)
                 {
                     TaskbarIcon.SetMenuIsVisible(Command, true);
-                    TaskbarIcon.SetMenuHeader(Command, PluginManager.GetMenuHeader(Command));
+                    TaskbarIcon.SetMenuText(Command, PluginManager.GetMenuHeader(Command));
                     TaskbarIcon.SetMenuIsEnabled(Command, PluginManager.GetMenuIsEnabled(Command));
 
                     Bitmap? MenuIcon = PluginManager.GetMenuIcon(Command);
                     if (MenuIcon != null)
                     {
-                        TaskbarIcon.SetMenuIsChecked(Command, false);
+                        TaskbarIcon.SetMenuCheck(Command, false);
                         TaskbarIcon.SetMenuIcon(Command, MenuIcon);
                     }
                     else
-                        TaskbarIcon.SetMenuIsChecked(Command, PluginManager.GetMenuIsChecked(Command));
+                        TaskbarIcon.SetMenuCheck(Command, PluginManager.GetMenuIsChecked(Command));
                 }
                 else
                     TaskbarIcon.SetMenuIsVisible(Command, false);
@@ -524,7 +524,7 @@ namespace TaskbarIconHost
             PluginManager.OnIconClicked();
         }
 
-        public TaskbarIcon AppTaskbarIcon { get; private set; } = TaskbarIcon.None;
+        public TaskbarIcon AppTaskbarIcon { get; private set; } = TaskbarIcon.Empty;
         private const string LoadAtStartupHeader = "Load at startup";
         private const string RemoveFromStartupHeader = "Remove from startup";
         private ICommand LoadAtStartupCommand = new RoutedCommand();
@@ -542,7 +542,7 @@ namespace TaskbarIconHost
             if (IsElevated)
             {
                 // The user is changing the state.
-                TaskbarIcon.ToggleMenuIsChecked(LoadAtStartupCommand, out bool Install);
+                TaskbarIcon.ToggleMenuCheck(LoadAtStartupCommand, out bool Install);
                 InstallLoad(Install, PluginDetails.Name);
             }
             else
@@ -627,10 +627,10 @@ namespace TaskbarIconHost
 
                 // Check the new plugin in the menu, and uncheck the previous one.
                 if (IconSelectionTable.ContainsKey(NewSelectedGuid))
-                    TaskbarIcon.SetMenuIsChecked(IconSelectionTable[NewSelectedGuid], true);
+                    TaskbarIcon.SetMenuCheck(IconSelectionTable[NewSelectedGuid], true);
 
                 if (IconSelectionTable.ContainsKey(OldSelectedGuid))
-                    TaskbarIcon.SetMenuIsChecked(IconSelectionTable[OldSelectedGuid], false);
+                    TaskbarIcon.SetMenuCheck(IconSelectionTable[OldSelectedGuid], false);
             }
         }
 

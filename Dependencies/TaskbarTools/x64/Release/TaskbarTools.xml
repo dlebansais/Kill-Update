@@ -58,7 +58,7 @@
             <summary>
             Create and display a taskbar icon.
             </summary>
-            <param name="icon">The icon displayed.</param>
+            <param name="icon">The icon displayed. The caller is responsible for releasing it when the created instance of <see cref="T:TaskbarTools.TaskbarIcon"/> is released.</param>
             <param name="toolTipText">The text shown when the mouse is over the icon, can be null.</param>
             <param name="menu">The menu that pops up when the user left click the icon, can be null.</param>
             <param name="target">The object that receives command notifications, can be null.</param>
@@ -92,19 +92,19 @@
             <param name="command">The command associated to the menu item.</param>
             <param name="text">The new menu item text.</param>
         </member>
-        <member name="M:TaskbarTools.TaskbarIcon.SetMenuIsEnabled(System.Windows.Input.ICommand,System.Boolean)">
-            <summary>
-            Enable or disable the menu item. This can be called within a handler of the <see cref="E:TaskbarTools.TaskbarIcon.MenuOpening"/> event, the change is applied as the menu pops up.
-            </summary>
-            <param name="command">The command associated to the menu item.</param>
-            <param name="isEnabled">True if enabled.</param>
-        </member>
         <member name="M:TaskbarTools.TaskbarIcon.SetMenuIsVisible(System.Windows.Input.ICommand,System.Boolean)">
             <summary>
             Show or hide the menu item. This can be called within a handler of the <see cref="E:TaskbarTools.TaskbarIcon.MenuOpening"/> event, the change is applied as the menu pops up.
             </summary>
             <param name="command">The command associated to the menu item.</param>
             <param name="isVisible">True to show the menu item.</param>
+        </member>
+        <member name="M:TaskbarTools.TaskbarIcon.SetMenuIsEnabled(System.Windows.Input.ICommand,System.Boolean)">
+            <summary>
+            Enable or disable the menu item. This can be called within a handler of the <see cref="E:TaskbarTools.TaskbarIcon.MenuOpening"/> event, the change is applied as the menu pops up.
+            </summary>
+            <param name="command">The command associated to the menu item.</param>
+            <param name="isEnabled">True if enabled.</param>
         </member>
         <member name="M:TaskbarTools.TaskbarIcon.SetMenuIcon(System.Windows.Input.ICommand,System.Drawing.Icon)">
             <summary>
@@ -124,7 +124,7 @@
             <summary>
             Change the taskbar icon.
             </summary>
-            <param name="icon">The icon displayed.</param>
+            <param name="icon">The new icon displayed. The caller is responsible for releasing it as well as the old icon.</param>
         </member>
         <member name="M:TaskbarTools.TaskbarIcon.UpdateToolTipText(System.String)">
             <summary>
@@ -135,7 +135,7 @@
         <member name="M:TaskbarTools.TaskbarIcon.PrepareMenuItem(System.Windows.Controls.MenuItem,System.Boolean,System.Boolean)">
             <summary>
             Prepares a menu item before is is added to a menu, before calling <see cref="M:TaskbarTools.TaskbarIcon.Create(System.Drawing.Icon,System.String,System.Windows.Controls.ContextMenu,System.Windows.IInputElement)"/>.
-            This method is required only if either <paramref>IsVisible</paramref> or <paramref>IsEnabled</paramref> is false.
+            Calling this method is required only if either <paramref name="isVisible"/> or <paramref name="isEnabled"/> is false.
             </summary>
             <param name="item">The modified menu item.</param>
             <param name="isVisible">True if the menu should be visible.</param>
@@ -150,6 +150,12 @@
             <summary>
             Event raised when the icon is clicked.
             </summary>
+        </member>
+        <member name="M:TaskbarTools.TaskbarIcon.OnClick(System.Windows.Forms.MouseButtons)">
+            <summary>
+            Called when a mouse button has been clicked on the taskbar icon.
+            </summary>
+            <param name="button">The mouse button.</param>
         </member>
         <member name="M:TaskbarTools.TaskbarIcon.Dispose(System.Boolean)">
             <summary>
