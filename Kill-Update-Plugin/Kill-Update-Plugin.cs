@@ -369,7 +369,7 @@ namespace KillUpdate
 
             try
             {
-                ServiceController Service = new ServiceController(WindowsUpdateServiceName);
+                using ServiceController Service = new ServiceController(WindowsUpdateServiceName);
 
                 if (IsElevated)
                     ChangeLockMode(Service, lockIt);
@@ -482,7 +482,7 @@ namespace KillUpdate
         /// <summary>
         /// True after <see cref="Dispose(bool)"/> has been invoked.
         /// </summary>
-        private bool IsDisposed = false;
+        private bool IsDisposed;
 
         /// <summary>
         /// Disposes of every reference that must be cleaned up.

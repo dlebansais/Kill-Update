@@ -99,9 +99,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LoadAtStartupWindow.xaml.cs">
       <DependentUpon>LoadAtStartupWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Plugin\PluginClient.cs" />
     <Compile Include="Plugin\PluginException.cs" />
     <Compile Include="Plugin\PluginLogger.cs" />
@@ -111,6 +113,8 @@
       <DependentUpon>RemoveFromStartupWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scheduler.cs" />
+    <Compile Include="Taskbar\IconCreationFailedException.cs" />
+    <Compile Include="Taskbar\InvalidCommandException.cs" />
     <Compile Include="Taskbar\TaskbarIcon.cs" />
   </ItemGroup>
   <ItemGroup>

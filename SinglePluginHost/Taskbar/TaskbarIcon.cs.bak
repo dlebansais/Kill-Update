@@ -33,7 +33,7 @@ namespace TaskbarTools
 
         protected static List<TaskbarIcon> ActiveIconList { get; private set; } = new List<TaskbarIcon>();
         private NotifyIcon NotifyIcon;
-        private IInputElement? Target;
+        private IInputElement Target;
         #endregion
 
         #region Client Interface
@@ -45,7 +45,7 @@ namespace TaskbarTools
         /// <param name="menu">The menu that pops up when the user left click the icon, can be null</param>
         /// <param name="target">The object that receives command notifications, can be null</param>
         /// <returns>The created taskbar icon object</returns>
-        public static TaskbarIcon Create(Icon icon, string toolTipText, System.Windows.Controls.ContextMenu? menu, IInputElement? target)
+        public static TaskbarIcon Create(Icon icon, string toolTipText, System.Windows.Controls.ContextMenu menu, IInputElement target)
         {
             try
             {
@@ -140,10 +140,10 @@ namespace TaskbarTools
         /// </summary>
         /// <param name="command">The command associated to the menu item</param>
         /// <param name="icon">The icon to set, null for no icon</param>
-        public static void SetMenuIcon(ICommand command, Icon? icon)
+        public static void SetMenuIcon(ICommand command, Icon icon)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
-            MenuItem.Image = icon?.ToBitmap();
+            MenuItem.Image = icon.ToBitmap();
         }
 
         /// <summary>
@@ -212,14 +212,14 @@ namespace TaskbarTools
         /// <param name="isEnabled">True if the menu should be enabled</param>
         public static void PrepareMenuItem(System.Windows.Controls.MenuItem item, bool isVisible, bool isEnabled)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
+            item.Visibility = isVisible ? (isEnabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden) : System.Windows.Visibility.Collapsed;
         }
 
         private static void SetNotifyIconText(NotifyIcon ni, string text)
         {
+            if (text != null && text.Length >= 128)
+                throw new ArgumentOutOfRangeException("Text limited to 127 characters");
+
             Type t = typeof(NotifyIcon);
             System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
             t.GetField("text", hidden).SetValue(ni, text);
@@ -282,7 +282,7 @@ namespace TaskbarTools
             switch (button)
             {
                 case MouseButtons.Left:
-                    if (Target is Popup PopupTarget && !PopupTarget.IsOpen)
+                    if (Target != null && Target is Popup PopupTarget && !PopupTarget.IsOpen)
                     {
                         // We rely on time to avoid a flickering popup.
                         if ((DateTime.UtcNow - LastClosedTime).TotalSeconds >= 1.0)
@@ -315,15 +315,10 @@ namespace TaskbarTools
         #endregion
 
         #region Menu
-        private ContextMenuStrip? MenuToMenuStrip(System.Windows.Controls.ContextMenu? menu)
+        private ContextMenuStrip MenuToMenuStrip(System.Windows.Controls.ContextMenu menu)
         {
-            ContextMenuStrip? Result = null;
-
-            if (menu != null)
-            {
-                Result = new ContextMenuStrip();
-                ConvertToolStripMenuItems(menu.Items, Result.Items);
-            }
+            ContextMenuStrip Result = new ContextMenuStrip();
+            ConvertToolStripMenuItems(menu.Items, Result.Items);
 
             return Result;
         }

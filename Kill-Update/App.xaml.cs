@@ -60,7 +60,7 @@ namespace KillUpdate
         }
 #pragma warning restore CS8618 // Non-nullable property is uninitialized
 
-        private EventWaitHandle? InstanceEvent = null;
+        private EventWaitHandle? InstanceEvent;
         #endregion
 
         #region Properties
@@ -197,7 +197,7 @@ namespace KillUpdate
                 SetSettingKey(valueName, value, RegistryValueKind.String);
         }
 
-        private static RegistryKey? SettingKey = null;
+        private static RegistryKey? SettingKey;
         #endregion
 
         #region Taskbar Icon
@@ -369,17 +369,16 @@ namespace KillUpdate
         {
             App.AddLog("OnMenuOpening");
 
-            TaskbarIcon SenderIcon = (TaskbarIcon)sender;
             string ExeName = Assembly.GetExecutingAssembly().Location;
 
             if (IsElevated)
-                SenderIcon.SetCheck(LoadAtStartupCommand, Scheduler.IsTaskActive(ExeName));
+                TaskbarIcon.SetMenuIsChecked(LoadAtStartupCommand, Scheduler.IsTaskActive(ExeName));
             else
             {
                 if (Scheduler.IsTaskActive(ExeName))
-                    SenderIcon.SetText(LoadAtStartupCommand, RemoveFromStartupHeader);
+                    TaskbarIcon.SetMenuHeader(LoadAtStartupCommand, RemoveFromStartupHeader);
                 else
-                    SenderIcon.SetText(LoadAtStartupCommand, LoadAtStartupHeader);
+                    TaskbarIcon.SetMenuHeader(LoadAtStartupCommand, LoadAtStartupHeader);
             }
         }
 
@@ -442,7 +441,7 @@ namespace KillUpdate
         {
             App.AddLog("OnCommandLoadAtStartup");
 
-            TaskbarIcon.ToggleChecked(LoadAtStartupCommand, out bool Install);
+            TaskbarIcon.ToggleMenuIsChecked(LoadAtStartupCommand, out bool Install);
             InstallLoad(Install);
         }
 
@@ -450,7 +449,7 @@ namespace KillUpdate
         {
             App.AddLog("OnCommandLock");
 
-            TaskbarIcon.ToggleChecked(LockCommand, out bool LockIt);
+            TaskbarIcon.ToggleMenuIsChecked(LockCommand, out bool LockIt);
             SetSettingBool("Locked", LockIt);
             ChangeLockMode(LockIt);
 
@@ -605,7 +604,7 @@ namespace KillUpdate
         #endregion
 
         #region Load at startup
-        private void InstallLoad(bool isInstalled)
+        private static void InstallLoad(bool isInstalled)
         {
             string ExeName = Assembly.GetExecutingAssembly().Location;
 
@@ -661,7 +660,7 @@ namespace KillUpdate
         /// <summary>
         /// True after <see cref="Dispose(bool)"/> has been invoked.
         /// </summary>
-        private bool IsDisposed = false;
+        private bool IsDisposed;
 
         /// <summary>
         /// Disposes of every reference that must be cleaned up.

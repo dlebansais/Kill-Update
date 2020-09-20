@@ -11,15 +11,6 @@ namespace TaskbarTools
     public class TaskbarIcon : IDisposable
     {
         #region Init
-        public static TaskbarIcon None { get; } = new TaskbarIcon();
-
-        private TaskbarIcon()
-        {
-            NotifyIcon = null !;
-            Target = null !;
-            LastClosedTime = DateTime.MinValue;
-        }
-
         protected TaskbarIcon(NotifyIcon notifyIcon, IInputElement? target)
         {
             NotifyIcon = notifyIcon;
@@ -253,11 +244,6 @@ namespace TaskbarTools
         public event EventHandler? MenuOpening;
 
         /// <summary>
-        /// Event raised when the icon is clicked.
-        /// </summary>
-        public event EventHandler? IconClicked;
-
-        /// <summary>
         /// Last icon used in <see cref="SetNotifyIcon"/>
         /// </summary>
         private static Icon? CurrentIcon;
@@ -290,8 +276,6 @@ namespace TaskbarTools
                         else
                             LastClosedTime = DateTime.MinValue;
                     }
-
-                    IconClicked?.Invoke(this, new EventArgs());
                     break;
 
                 case MouseButtons.Right:

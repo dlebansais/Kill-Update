@@ -30,7 +30,7 @@ namespace TaskbarIconHost
                     }
                 }
 
-                if (!string.IsNullOrEmpty(TraceFilePath))
+                if (TraceFilePath != null && TraceFilePath.Length > 0)
                 {
                     bool IsFirstTraceWritten = false;
 
@@ -69,7 +69,7 @@ namespace TaskbarIconHost
                 lock (GlobalLock)
                 {
                     DateTime UtcNow = DateTime.UtcNow;
-                    string TimeLog = UtcNow.ToString(CultureInfo.InvariantCulture) + UtcNow.Millisecond.ToString("D3");
+                    string TimeLog = UtcNow.ToString(CultureInfo.InvariantCulture) + UtcNow.Millisecond.ToString("D3", CultureInfo.InvariantCulture);
 
                     string Line = $"TaskbarIconHost - {TimeLog}: {text}\n";
 
@@ -104,7 +104,7 @@ namespace TaskbarIconHost
 
         private void PrintLine(string line)
         {
-            OutputDebugString(line);
+            NativeMethods.OutputDebugString(line);
 
             if (IsFileLogOn)
                 WriteLineToTraceFile(line);
@@ -130,13 +130,10 @@ namespace TaskbarIconHost
             }
         }
 
-        [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        public static extern void OutputDebugString([In][MarshalAs(UnmanagedType.LPWStr)] string message);
-
-        private string LogLines = null;
-        private object GlobalLock = "";
+        private string? LogLines;
+        private object GlobalLock = string.Empty;
         private bool IsLogOn;
         private bool IsFileLogOn;
-        private string TraceFilePath;
+        private string? TraceFilePath;
     }
 }

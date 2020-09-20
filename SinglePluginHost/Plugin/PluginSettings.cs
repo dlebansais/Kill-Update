@@ -1,12 +1,13 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Globalization;
 
 namespace TaskbarIconHost
 {
     public class PluginSettings : IPluginSettings, IDisposable
     {
         #region Init
-        public PluginSettings(string pluginName, IPluginLogger logger)
+        public PluginSettings(string? pluginName, IPluginLogger logger)
         {
             PluginName = pluginName;
             Logger = logger;
@@ -47,7 +48,7 @@ namespace TaskbarIconHost
         #endregion
 
         #region Properties
-        public string PluginName { get; }
+        public string? PluginName { get; }
         #endregion
 
         #region Settings
@@ -87,7 +88,7 @@ namespace TaskbarIconHost
 
         public string GetSettingString(string valueName, string defaultValue)
         {
-            string value = GetSettingKey(valueName) as string;
+            string? value = GetSettingKey(valueName) as string;
             return value != null ? value : defaultValue;
         }
 
@@ -101,8 +102,8 @@ namespace TaskbarIconHost
 
         public double GetSettingDouble(string valueName, double defaultValue)
         {
-            string StringValue = GetSettingKey(valueName) as string;
-            if (StringValue != null && double.TryParse(StringValue, out double value))
+            string? StringValue = GetSettingKey(valueName) as string;
+            if (StringValue != null && double.TryParse(StringValue, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
                 return value;
             else
                 return defaultValue;
@@ -110,11 +111,11 @@ namespace TaskbarIconHost
 
         public void SetSettingDouble(string valueName, double value)
         {
-            string StringValue = value.ToString();
+            string StringValue = value.ToString(CultureInfo.InvariantCulture);
             SetSettingKey(valueName, StringValue, RegistryValueKind.String);
         }
 
-        private object GetSettingKey(string valueName)
+        private object? GetSettingKey(string valueName)
         {
             try
             {
@@ -149,7 +150,7 @@ namespace TaskbarIconHost
         }
 
         private IPluginLogger Logger;
-        private RegistryKey SettingKey;
+        private RegistryKey? SettingKey;
         #endregion
 
         #region Implementation of IDisposable

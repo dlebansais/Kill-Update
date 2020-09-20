@@ -35,7 +35,7 @@ namespace TaskbarIconHost
 
                     // The TaskbarIconHost.xml file must be added to the project has an "Embedded Reource".
                     foreach (string ResourceName in ExecutingAssembly.GetManifestResourceNames())
-                        if (ResourceName.EndsWith("TaskbarIconHost.xml"))
+                        if (ResourceName.EndsWith("TaskbarIconHost.xml", StringComparison.InvariantCulture))
                         {
                             using (Stream rs = ExecutingAssembly.GetManifestResourceStream(ResourceName))
                             {
@@ -68,14 +68,14 @@ namespace TaskbarIconHost
         public bool RequireElevated { get; private set; }
         public string TaskSelectiontext { get; private set; }
 
-        private string TaskFile;
+        private string TaskFile = string.Empty;
         #endregion
 
         #region Events
         private void OnLaunch(object sender, ExecutedRoutedEventArgs e)
         {
             // Launch the Windows Task Scheduler.
-            Process ControlProcess = new Process();
+            using Process ControlProcess = new Process();
             ControlProcess.StartInfo.FileName = "control.exe";
             ControlProcess.StartInfo.Arguments = "schedtasks";
             ControlProcess.StartInfo.UseShellExecute = true;

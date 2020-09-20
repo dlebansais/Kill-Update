@@ -9,16 +9,19 @@ namespace Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null || value == BindingOperations.DisconnectedSource || parameter == null)
+                return null !;
+
             bool BoolValue = (bool)value;
-            CompositeCollection CollectionOfItems = parameter as CompositeCollection;
+            CompositeCollection CollectionOfItems = (CompositeCollection)parameter;
 
             // Return the first or second object of a collection depending on a bool value.
-            return CollectionOfItems[BoolValue ? 1 : 0];
+            return CollectionOfItems[BoolValue ? 1 : 0] !;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return null;
+            return null !;
         }
     }
 }

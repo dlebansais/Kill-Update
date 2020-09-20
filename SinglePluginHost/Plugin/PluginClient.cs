@@ -9,7 +9,7 @@ namespace TaskbarIconHost
 {
     public class PluginClient : IPluginClient
     {
-        public PluginClient(object pluginHandle, string name, Guid guid, bool requireElevated, bool hasClickHandler, EventWaitHandle instanceEvent)
+        public PluginClient(object pluginHandle, string name, Guid guid, bool requireElevated, bool hasClickHandler, EventWaitHandle? instanceEvent)
         {
             PluginHandle = pluginHandle;
             Name = name;
@@ -24,7 +24,7 @@ namespace TaskbarIconHost
         public Guid Guid { get; private set; }
         public bool RequireElevated { get; private set; }
         public bool HasClickHandler { get; private set; }
-        public EventWaitHandle InstanceEvent { get; private set; }
+        public EventWaitHandle? InstanceEvent { get; private set; }
 
         public void Initialize(bool isElevated, Dispatcher dispatcher, IPluginSettings settings, IPluginLogger logger)
         {
@@ -110,7 +110,7 @@ namespace TaskbarIconHost
 
         public void BeginClose()
         {
-            using (EventWaitHandle EventWaitHandle = InstanceEvent)
+            using (EventWaitHandle? EventWaitHandle = InstanceEvent)
             {
                 InstanceEvent = null;
             }
