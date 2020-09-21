@@ -57,8 +57,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="TaskbarIconShared">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>TaskbarIconHost\$(Platform)\TaskbarIconShared.dll</HintPath>
+      <HintPath>..\Dependencies\TaskbarIconShared\$(Platform)\$(Configuration)\TaskbarIconShared.dll</HintPath>
     </Reference>
     <Reference Include="TaskbarTools">
       <HintPath>..\Dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
@@ -81,7 +80,6 @@
     <EmbeddedResource Include="Resources\Locked-Enabled.ico" />
     <EmbeddedResource Include="Resources\Locked-Disabled.ico" />
     <EmbeddedResource Include="Resources\Kill-Update.png" />
-    <Content Include="TaskbarIconHost\TaskbarIconShared.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

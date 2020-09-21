@@ -1,24 +1,24 @@
-﻿using Microsoft.Win32;
-using Microsoft.Win32.TaskScheduler;
-using SchedulerTools;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Security.Principal;
-using System.ServiceProcess;
-using System.Threading;
-using System.Windows;
-using System.Drawing;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Threading;
-using TaskbarTools;
-using System.Diagnostics;
-using System.Globalization;
-
-namespace KillUpdate
+﻿namespace KillUpdate
 {
+    using Microsoft.Win32;
+    using Microsoft.Win32.TaskScheduler;
+    using SchedulerTools;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Reflection;
+    using System.Security.Principal;
+    using System.ServiceProcess;
+    using System.Threading;
+    using System.Windows;
+    using System.Drawing;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+    using System.Windows.Threading;
+    using TaskbarTools;
+    using System.Diagnostics;
+    using System.Globalization;
+
     public partial class App : Application, IDisposable
     {
         #region Init

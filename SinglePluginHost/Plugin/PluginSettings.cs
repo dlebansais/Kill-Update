@@ -115,6 +115,21 @@ namespace TaskbarIconHost
             SetSettingKey(valueName, StringValue, RegistryValueKind.String);
         }
 
+        public Guid GetSettingGuid(string valueName, Guid defaultValue)
+        {
+            string? StringValue = GetSettingKey(valueName) as string;
+            if (StringValue != null && Guid.TryParse(StringValue, out Guid value))
+                return value;
+            else
+                return defaultValue;
+        }
+
+        public void SetSettingGuid(string valueName, Guid value)
+        {
+            string StringValue = value.ToString();
+            SetSettingKey(valueName, StringValue, RegistryValueKind.String);
+        }
+
         private object? GetSettingKey(string valueName)
         {
             try
