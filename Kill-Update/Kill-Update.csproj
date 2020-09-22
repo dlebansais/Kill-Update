@@ -50,9 +50,8 @@
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Win32.TaskScheduler">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Scheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
+    <Reference Include="SchedulerTools">
+      <HintPath>..\Dependencies\SchedulerTools\$(Platform)\$(Configuration)\SchedulerTools.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -84,7 +83,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Scheduler.cs" />
     <Compile Include="ServiceHelper.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

@@ -1,22 +1,21 @@
-﻿using Microsoft.Win32.TaskScheduler;
-using SchedulerTools;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Threading;
-using TaskbarTools;
-
-namespace TaskbarIconHost
+﻿namespace TaskbarIconHost
 {
+    using SchedulerTools;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Drawing;
+    using System.IO;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+    using System.Security.Principal;
+    using System.Threading;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+    using System.Windows.Threading;
+    using TaskbarTools;
+
     public partial class App : Application, IDisposable
     {
         #region Init
@@ -704,7 +703,7 @@ namespace TaskbarIconHost
             if (isInstalled)
             {
                 TaskRunLevel RunLevel = PluginManager.RequireElevated ? TaskRunLevel.Highest : TaskRunLevel.LUA;
-                Scheduler.AddTask(appName, ExeName, RunLevel, Logger);
+                Scheduler.AddTask(appName, ExeName, RunLevel);
             }
             else
                 Scheduler.RemoveTask(ExeName, out bool IsFound); // Ignore it if the task was not found.

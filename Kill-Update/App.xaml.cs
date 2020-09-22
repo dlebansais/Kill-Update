@@ -1,7 +1,6 @@
 ﻿namespace KillUpdate
 {
     using Microsoft.Win32;
-    using Microsoft.Win32.TaskScheduler;
     using SchedulerTools;
     using System;
     using System.Collections.Generic;
