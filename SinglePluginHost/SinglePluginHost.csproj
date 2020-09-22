@@ -146,7 +146,6 @@
     <EmbeddedResource Include="Resources\UAC-16.png" />
     <Resource Include="Resources\main.ico" />
     <EmbeddedResource Include="Resources\TaskbarIconHost.xml" />
-    <Content Include="Scheduler\Microsoft.Win32.TaskScheduler.dll" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="LoadAtStartupWindow.xaml">
