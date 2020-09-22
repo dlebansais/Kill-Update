@@ -28,7 +28,6 @@
             InitSettings();
         }
 
-#pragma warning disable CS8618 // Non-nullable property is uninitialized
         public App()
         {
             // Ensure only one instance is running at a time.
@@ -57,7 +56,6 @@
             Startup += OnStartup;
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
-#pragma warning restore CS8618 // Non-nullable property is uninitialized
 
         private EventWaitHandle? InstanceEvent;
         #endregion
@@ -204,7 +202,6 @@
         {
             App.AddLog("InitTaskbarIcon starting");
 
-            MenuHeaderTable = new Dictionary<ICommand, string>();
             LoadAtStartupCommand = InitMenuCommand("LoadAtStartupCommand", LoadAtStartupHeader, OnCommandLoadAtStartup);
             LockCommand = InitMenuCommand("LockCommand", "Locked", OnCommandLock);
             ExitCommand = InitMenuCommand("ExitCommand", "Exit", OnCommandExit);
@@ -380,14 +377,14 @@
             }
         }
 
-        private TaskbarIcon AppTaskbarIcon;
-        private Icon AppIcon;
+        private TaskbarIcon AppTaskbarIcon = TaskbarIcon.Empty;
+        private Icon AppIcon = null !;
         private string LoadAtStartupHeader { get { return (string)TryFindResource("LoadAtStartupHeader"); } }
         private string RemoveFromStartupHeader { get { return (string)TryFindResource("RemoveFromStartupHeader"); } }
-        private ICommand LoadAtStartupCommand;
-        private ICommand LockCommand;
-        private ICommand ExitCommand;
-        private Dictionary<ICommand, string> MenuHeaderTable;
+        private ICommand LoadAtStartupCommand = null!;
+        private ICommand LockCommand = null!;
+        private ICommand ExitCommand = null!;
+        private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
         #endregion
 
         #region Zombification
@@ -421,7 +418,7 @@
             App.AddLog("ExitZombification done");
         }
 
-        private ZombifyMe.Zombification Zombification;
+        private ZombifyMe.Zombification Zombification = null!;
         #endregion
 
         #region Events

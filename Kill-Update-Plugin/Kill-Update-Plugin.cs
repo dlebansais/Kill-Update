@@ -12,8 +12,7 @@ using TaskbarIconHost;
 
 namespace KillUpdate
 {
-#pragma warning disable CS8618 // Non-nullable property is uninitialized
-    public class KillUpdatePlugin : TaskbarIconHost.IPluginClient, IDisposable
+    public class KillUpdatePlugin : IPluginClient, IDisposable
     {
         #region Plugin
         public string Name
@@ -36,7 +35,7 @@ namespace KillUpdate
             get { return false; }
         }
 
-        public void Initialize(bool isElevated, Dispatcher dispatcher, TaskbarIconHost.IPluginSettings settings, TaskbarIconHost.IPluginLogger logger)
+        public void Initialize(bool isElevated, Dispatcher dispatcher, IPluginSettings settings, IPluginLogger logger)
         {
             IsElevated = isElevated;
             Dispatcher = dispatcher;
@@ -193,9 +192,9 @@ namespace KillUpdate
         }
 
         public bool IsElevated { get; private set; }
-        public Dispatcher Dispatcher { get; private set; }
-        public TaskbarIconHost.IPluginSettings Settings { get; private set; }
-        public TaskbarIconHost.IPluginLogger Logger { get; private set; }
+        public Dispatcher Dispatcher { get; private set; } = null !;
+        public IPluginSettings Settings { get; private set; } = null !;
+        public IPluginLogger Logger { get; private set; } = null !;
 
         private T LoadEmbeddedResource<T>(string resourceName)
         {
@@ -407,9 +406,9 @@ namespace KillUpdate
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
         private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
         private ServiceStartMode? StartType;
-        private Timer UpdateTimer;
-        private Timer FullRestartTimer;
-        private Stopwatch UpdateWatch;
+        private Timer UpdateTimer = null !;
+        private Timer FullRestartTimer = null !;
+        private Stopwatch UpdateWatch = null !;
         #endregion
 
         #region Zombification
@@ -443,7 +442,7 @@ namespace KillUpdate
             Logger.AddLog("ExitZombification done");
         }
 
-        private ZombifyMe.Zombification Zombification;
+        private ZombifyMe.Zombification Zombification = null !;
         #endregion
 
         #region Implementation of IDisposable
@@ -499,5 +498,4 @@ namespace KillUpdate
         }
         #endregion
     }
-#pragma warning restore CS8618 // Non-nullable property is uninitialized
 }
