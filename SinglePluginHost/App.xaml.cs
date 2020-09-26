@@ -1,5 +1,6 @@
 ﻿namespace TaskbarIconHost
 {
+    using RegistryTools;
     using SchedulerTools;
     using System;
     using System.Collections.Generic;
@@ -15,19 +16,20 @@
     using System.Windows.Input;
     using System.Windows.Threading;
     using TaskbarTools;
+    using Tracing;
 
     public partial class App : Application, IDisposable
     {
         #region Init
         static App()
         {
-            Logger.AddLog("Starting");
+            Logger.Write(Category.Debug, "Starting");
         }
 
         public App()
         {
             // Ensure only one instance is running at a time.
-            Logger.AddLog("Checking uniqueness");
+            Logger.Write(Category.Debug, "Checking uniqueness");
 
             try
             {
@@ -47,7 +49,7 @@
                 InstanceEvent = new EventWaitHandle(false, EventResetMode.ManualReset, AppUniqueId, out createdNew);
                 if (!createdNew)
                 {
-                    Logger.AddLog("Another instance is already running");
+                    Logger.Write(Category.Warning, "Another instance is already running");
                     InstanceEvent.Close();
                     InstanceEvent = null;
                     Shutdown();
@@ -56,7 +58,7 @@
             }
             catch (Exception e)
             {
-                Logger.AddLog($"(from App) {e.Message}");
+                Logger.Write(Category.Error, $"(from App) {e.Message}");
 
                 Shutdown();
                 return;
@@ -77,7 +79,7 @@
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            Logger.AddLog("OnStartup");
+            Logger.Write(Category.Debug, "OnStartup");
 
             InitTimer();
 
@@ -114,7 +116,7 @@
         // Someone called Exit on the application. Time to clean things up.
         private void OnExit(object sender, ExitEventArgs e)
         {
-            Logger.AddLog("Exiting application");
+            Logger.Write(Category.Debug, "Exiting application");
 
             // Set this flag to minimize asynchronous activities.
             IsExiting = true;
@@ -125,7 +127,7 @@
             CleanupInstanceEvent();
 
             // Explicit display of the last message since timed debug is not running anymore.
-            Logger.AddLog("Done");
+            Logger.Write(Category.Debug, "Done");
             UpdateLogger();
         }
 
@@ -162,7 +164,7 @@
                     else
                         _IsElevated = false;
 
-                    Logger.AddLog($"IsElevated={_IsElevated}");
+                    Logger.Write(Category.Information, $"IsElevated={_IsElevated}");
                 }
 
                 return _IsElevated.Value;
@@ -179,12 +181,13 @@
 
             // In the case of a single plugin version, this code won't do anything.
             // However, if several single plugin versions run concurrently, the last one to run will be the preferred one for another plugin host.
-            GlobalSettings = new PluginSettings(null, Logger);
+            GlobalSettings = new RegistryTools.Settings("TaskbarIconHost", "Main Settings", Logger);
 
             try
             {
                 // Assign the guid with a value taken from the registry. The try/catch blocks allows us to ignore invalid ones.
-                PluginManager.PreferredPluginGuid = new Guid(GlobalSettings.GetSettingString(PreferredPluginSettingName, PluginManager.GuidToString(Guid.Empty)));
+                GlobalSettings.GetString(PreferredPluginSettingName, PluginManager.GuidToString(Guid.Empty), out string PreferredPluginGuid);
+                PluginManager.PreferredPluginGuid = new Guid(PreferredPluginGuid);
             }
             catch
             {
@@ -196,7 +199,7 @@
         private void StopPlugInManager()
         {
             // Save this plugin guid so that the last saved will be the preferred one if there is another plugin host.
-            GlobalSettings?.SetSettingString(PreferredPluginSettingName, PluginManager.GuidToString(PluginManager.PreferredPluginGuid));
+            GlobalSettings?.SetString(PreferredPluginSettingName, PluginManager.GuidToString(PluginManager.PreferredPluginGuid));
             PluginManager.Shutdown();
 
             CleanupPlugInManager();
@@ -204,20 +207,20 @@
 
         private void CleanupPlugInManager()
         {
-            using (PluginSettings? PluginSettings = GlobalSettings)
+            using (Settings? Settings = GlobalSettings)
             {
                 GlobalSettings = null;
             }
         }
 
         private const string PreferredPluginSettingName = "PreferredPlugin";
-        private PluginSettings? GlobalSettings;
+        private Settings? GlobalSettings;
         #endregion
 
         #region Taskbar Icon
         private void InitTaskbarIcon()
         {
-            Logger.AddLog("InitTaskbarIcon starting");
+            Logger.Write(Category.Debug, "InitTaskbarIcon starting");
 
             // Create and bind the load at startip/remove from startup command.
             LoadAtStartupCommand = new RoutedUICommand();
@@ -251,7 +254,7 @@
                 AppTaskbarIcon.IconClicked += OnIconClicked;
             }
 
-            Logger.AddLog("InitTaskbarIcon done");
+            Logger.Write(Category.Debug, "InitTaskbarIcon done");
         }
 
         private void CleanupTaskbarIcon()
@@ -285,11 +288,11 @@
 
             // If not found, it could be because it's not tagged as "Embedded Resource".
             if (ResourcePath.Length == 0)
-                Logger.AddLog($"Resource {resourceName} not found");
+                Logger.Write(Category.Error, $"Resource {resourceName} not found");
 
             using Stream rs = assembly.GetManifestResourceStream(ResourcePath);
             T Result = (T)Activator.CreateInstance(typeof(T), rs);
-            Logger.AddLog($"Resource {resourceName} loaded");
+            Logger.Write(Category.Debug, $"Resource {resourceName} loaded");
 
             return Result;
         }
@@ -410,7 +413,7 @@
             TaskbarIcon.PrepareMenuItem(ExitMenu, true, true);
             Items.Add(ExitMenu);
 
-            Logger.AddLog("Menu created");
+            Logger.Write(Category.Debug, "Menu created");
 
             return Result;
         }
@@ -469,7 +472,7 @@
 
         private void OnMenuOpening(object sender, EventArgs e)
         {
-            Logger.AddLog("OnMenuOpening");
+            Logger.Write(Category.Debug, "OnMenuOpening");
 
             string ExeName = Assembly.GetExecutingAssembly().Location;
 
@@ -536,7 +539,7 @@
         #region Events
         private void OnCommandLoadAtStartup(object sender, ExecutedRoutedEventArgs e)
         {
-            Logger.AddLog("OnCommandLoadAtStartup");
+            Logger.Write(Category.Debug, "OnCommandLoadAtStartup");
 
             if (IsElevated)
             {
@@ -595,7 +598,7 @@
 
         private void OnPluginCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            Logger.AddLog("OnPluginCommand");
+            Logger.Write(Category.Debug, "OnPluginCommand");
 
             PluginManager.OnExecuteCommand(e.Command);
 
@@ -609,7 +612,7 @@
 
         private void OnCommandSelectPreferred(object sender, ExecutedRoutedEventArgs e)
         {
-            Logger.AddLog("OnCommandSelectPreferred");
+            Logger.Write(Category.Debug, "OnCommandSelectPreferred");
 
             RoutedUICommand SubmenuCommand = (RoutedUICommand)e.Command;
 
@@ -635,7 +638,7 @@
 
         private void OnCommandExit(object sender, ExecutedRoutedEventArgs e)
         {
-            Logger.AddLog("OnCommandExit");
+            Logger.Write(Category.Debug, "OnCommandExit");
 
             Shutdown();
         }
@@ -688,10 +691,10 @@
         #region Logger
         private static void UpdateLogger()
         {
-            Logger.PrintLog();
+            //Logger.PrintLog();
         }
 
-        private static PluginLogger Logger = new PluginLogger();
+        private static ITracer Logger = new PluginLogger();
         #endregion
 
         #region Load at startup

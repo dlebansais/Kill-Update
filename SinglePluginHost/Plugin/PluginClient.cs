@@ -1,9 +1,11 @@
-﻿using System;
+﻿using RegistryTools;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Tracing;
 
 namespace TaskbarIconHost
 {
@@ -26,7 +28,7 @@ namespace TaskbarIconHost
         public bool HasClickHandler { get; private set; }
         public EventWaitHandle? InstanceEvent { get; private set; }
 
-        public void Initialize(bool isElevated, Dispatcher dispatcher, IPluginSettings settings, IPluginLogger logger)
+        public void Initialize(bool isElevated, Dispatcher dispatcher, Settings settings, ITracer logger)
         {
             PluginManager.ExecutePluginMethod(PluginHandle, nameof(IPluginClient.Initialize), isElevated, dispatcher, settings, logger);
         }

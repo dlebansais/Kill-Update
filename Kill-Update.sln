@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2018
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update", "Kill-Update\Kill-Update.csproj", "{82665A13-754F-4EA3-ABA7-0561AB862F20}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update-Plugin", "Kill-Update-Plugin\Kill-Update-Plugin.csproj", "{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SinglePluginHost", "SinglePluginHost\SinglePluginHost.csproj", "{1AA662FD-9DDE-4638-B2B5-2367268B5B96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update-Core", "Kill-Update-Core\Kill-Update-Core.csproj", "{7053EEAE-8325-4837-A025-EBAAFED6B6D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Debug|x64.Build.0 = Debug|x64
 		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.ActiveCfg = Release|x64
 		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.Build.0 = Release|x64
+		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Debug|x64.ActiveCfg = Debug|x64
+		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Debug|x64.Build.0 = Debug|x64
+		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Release|x64.ActiveCfg = Release|x64
+		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

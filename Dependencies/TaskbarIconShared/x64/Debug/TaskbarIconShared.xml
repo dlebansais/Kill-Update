@@ -12,25 +12,25 @@
         </member>
         <member name="P:TaskbarIconHost.IPluginClient.Name">
             <summary>
-            Plugin name. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,TaskbarIconHost.IPluginSettings,TaskbarIconHost.IPluginLogger)"/> is called, and cached. Null or an empty string is not allowed, in this case the plugin will not load.
+            Plugin name. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,RegistryTools.Settings,Tracing.ITracer)"/> is called, and cached. Null or an empty string is not allowed, in this case the plugin will not load.
             </summary>
         </member>
         <member name="P:TaskbarIconHost.IPluginClient.Guid">
             <summary>
-            Plugin unique ID. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,TaskbarIconHost.IPluginSettings,TaskbarIconHost.IPluginLogger)"/> is called, and cached. The empty guid is not allowed, in this case the plugin will not load.
+            Plugin unique ID. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,RegistryTools.Settings,Tracing.ITracer)"/> is called, and cached. The empty guid is not allowed, in this case the plugin will not load.
             </summary>
         </member>
         <member name="P:TaskbarIconHost.IPluginClient.RequireElevated">
             <summary>
-            Indicate if the plugin require elevated (administrator) mode to operate. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,TaskbarIconHost.IPluginSettings,TaskbarIconHost.IPluginLogger)"/> is called, and cached.
+            Indicate if the plugin require elevated (administrator) mode to operate. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,RegistryTools.Settings,Tracing.ITracer)"/> is called, and cached.
             </summary>
         </member>
         <member name="P:TaskbarIconHost.IPluginClient.HasClickHandler">
             <summary>
-            Indicate if the plugin want to handle clicks on the taskbar icon. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,TaskbarIconHost.IPluginSettings,TaskbarIconHost.IPluginLogger)"/> is called, and cached. This setting only has a minor impact on the UI, since the <see cref="M:TaskbarIconHost.IPluginClient.OnIconClicked"/> event handler is called nevertheless.
+            Indicate if the plugin want to handle clicks on the taskbar icon. This value is read once before <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,RegistryTools.Settings,Tracing.ITracer)"/> is called, and cached. This setting only has a minor impact on the UI, since the <see cref="M:TaskbarIconHost.IPluginClient.OnIconClicked"/> event handler is called nevertheless.
             </summary>
         </member>
-        <member name="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,TaskbarIconHost.IPluginSettings,TaskbarIconHost.IPluginLogger)">
+        <member name="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,RegistryTools.Settings,Tracing.ITracer)">
             <summary>
             Called once at startup, to initialize the plugin.
             The <paramref name="isElevated"/> parameter indicates if the plugin is started in administrator mode. A plugin with <see cref="P:TaskbarIconHost.IPluginClient.RequireElevated"/> set should reflect this runtime value in the UI, for example with disabled menu items for operations that require administrator mode. A plugin that doesn't require administrator mode can safely ignore it.
@@ -50,7 +50,7 @@
             <summary>
             List of commands that the plugin can receive when an item is clicked in the context menu.
             Null is allowed, even more than once, and is a request to insert a separator between menu items associated to commands.
-            This property is read once after <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,TaskbarIconHost.IPluginSettings,TaskbarIconHost.IPluginLogger)"/> returns, and the value is cached.
+            This property is read once after <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,RegistryTools.Settings,Tracing.ITracer)"/> returns, and the value is cached.
             </summary>
         </member>
         <member name="M:TaskbarIconHost.IPluginClient.GetIsMenuChanged(System.Boolean)">
@@ -72,7 +72,7 @@
             <summary>
             Read the state of a menu item associated to <paramref name="command"/>.
             The state is cached until <see cref="M:TaskbarIconHost.IPluginClient.GetIsMenuChanged(System.Boolean)"/> returns true, then it is read again.
-            Note that the context menu is organized around the state after the call to <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,TaskbarIconHost.IPluginSettings,TaskbarIconHost.IPluginLogger)"/>. If items get shown/hidden afterward, it can give raise to a weird menu displayed, such as two separators one upon the other.
+            Note that the context menu is organized around the state after the call to <see cref="M:TaskbarIconHost.IPluginClient.Initialize(System.Boolean,System.Windows.Threading.Dispatcher,RegistryTools.Settings,Tracing.ITracer)"/>. If items get shown/hidden afterward, it can give raise to a weird menu displayed, such as two separators one upon the other.
             </summary>
             <param name="command">The command associated to the menu item</param>
             <returns>True if the menu item should be visible to the user, false if it should be hidden</returns>
@@ -191,98 +191,6 @@
             Add some text to a log that is displayed asynchronously in real time.
             </summary>
             <param name="logText">Text to add, without ending line feed or carriage return</param>
-        </member>
-        <member name="T:TaskbarIconHost.IPluginSettings">
-            <summary>
-            Interface to an object that reads and writes setting in the registry.
-            </summary>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.RenewKey">
-            <summary>
-            Disconnect and reconnect to the registry.
-            </summary>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.IsBoolKeySet(System.String)">
-            <summary>
-            Check if a boolean value exists in the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <returns>True if the value exists (and can be read), false otherwise</returns>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.GetSettingBool(System.String,System.Boolean)">
-            <summary>
-            Read a boolean value from the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="defaultValue">Default if the value doesn't exist</param>
-            <returns>The value in the registry, or <paramref name="defaultValue"/> if it doesn't</returns>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.SetSettingBool(System.String,System.Boolean)">
-            <summary>
-            Set a boolean value in the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="value">The value to set</param>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.GetSettingInt(System.String,System.Int32)">
-            <summary>
-            Read an integer value from the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="defaultValue">Default if the value doesn't exist</param>
-            <returns>The value in the registry, or <paramref name="defaultValue"/> if it doesn't</returns>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.SetSettingInt(System.String,System.Int32)">
-            <summary>
-            Set an integer value in the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="value">The value to set</param>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.GetSettingString(System.String,System.String)">
-            <summary>
-            Read a string value from the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="defaultValue">Default if the value doesn't exist</param>
-            <returns>The value in the registry, or <paramref name="defaultValue"/> if it doesn't</returns>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.SetSettingString(System.String,System.String)">
-            <summary>
-            Set a string value in the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="value">The value to set</param>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.GetSettingDouble(System.String,System.Double)">
-            <summary>
-            Read a double value from the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="defaultValue">Default if the value doesn't exist</param>
-            <returns>The value in the registry, or <paramref name="defaultValue"/> if it doesn't</returns>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.SetSettingDouble(System.String,System.Double)">
-            <summary>
-            Set a double value in the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="value">The value to set</param>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.GetSettingGuid(System.String,System.Guid)">
-            <summary>
-            Read a guid value from the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="defaultValue">Default if the value doesn't exist</param>
-            <returns>The value in the registry, or <paramref name="defaultValue"/> if it doesn't</returns>
-        </member>
-        <member name="M:TaskbarIconHost.IPluginSettings.SetSettingGuid(System.String,System.Guid)">
-            <summary>
-            Set a guid value in the registry.
-            </summary>
-            <param name="valueName">Value name</param>
-            <param name="value">The value to set</param>
         </member>
         <member name="T:TaskbarIconHost.ResourceTools">
             <summary>

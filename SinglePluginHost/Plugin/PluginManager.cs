@@ -8,12 +8,13 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.Security.Cryptography.X509Certificates;
 using System.Globalization;
+using Tracing;
 
 namespace TaskbarIconHost
 {
     public static class PluginManager
     {
-        public static bool Init(bool isElevated, string embeddedPluginName, Guid embeddedPluginGuid, Dispatcher dispatcher, IPluginLogger logger)
+        public static bool Init(bool isElevated, string embeddedPluginName, Guid embeddedPluginGuid, Dispatcher dispatcher, ITracer logger)
         {
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
@@ -70,7 +71,7 @@ namespace TaskbarIconHost
                 foreach (KeyValuePair<Assembly, List<IPluginClient>> Entry in LoadedPluginTable)
                     foreach (IPluginClient Plugin in Entry.Value)
                     {
-                        using PluginSettings Settings = new PluginSettings(GuidToString(Plugin.Guid), logger);
+                        using RegistryTools.Settings Settings = new RegistryTools.Settings("TaskbarIconHost", GuidToString(Plugin.Guid), logger);
                         Plugin.Initialize(isElevated, dispatcher, Settings, logger);
 
                         if (Plugin.RequireElevated)
@@ -114,7 +115,7 @@ namespace TaskbarIconHost
             }
             else
             {
-                logger.AddLog($"Could not load plugins, {AssemblyCount} assemblies found, {CompatibleAssemblyCount} are compatible.");
+                logger.Write(Category.Warning, $"Could not load plugins, {AssemblyCount} assemblies found, {CompatibleAssemblyCount} are compatible.");
                 return false;
             }
         }
@@ -267,7 +268,7 @@ namespace TaskbarIconHost
             }
         }
 
-        private static void CreatePluginList(Assembly pluginAssembly, List<Type> PluginClientTypeList, Guid embeddedPluginGuid, IPluginLogger logger, out List<IPluginClient> PluginList)
+        private static void CreatePluginList(Assembly pluginAssembly, List<Type> PluginClientTypeList, Guid embeddedPluginGuid, ITracer logger, out List<IPluginClient> PluginList)
         {
             PluginList = new List<IPluginClient>();
 
@@ -303,7 +304,7 @@ namespace TaskbarIconHost
                             }
                             else
                             {
-                                logger.AddLog("Another instance of a plugin is already running");
+                                logger.Write(Category.Warning, "Another instance of a plugin is already running");
 
                                 InstanceEvent?.Close();
                                 InstanceEvent = null;

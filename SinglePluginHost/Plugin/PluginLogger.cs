@@ -3,10 +3,11 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Tracing;
 
 namespace TaskbarIconHost
 {
-    public class PluginLogger : IPluginLogger
+    public class PluginLogger : ITracer
     {
         public PluginLogger()
         {
@@ -55,6 +56,25 @@ namespace TaskbarIconHost
                 PrintLine("Unable to start logging traces.");
                 PrintLine(e.Message);
             }
+        }
+
+        public void Write(Category category, string message, params object[] arguments)
+        {
+            if (arguments.Length > 0)
+                AddLog(string.Format(CultureInfo.InvariantCulture, message, arguments));
+            else
+                AddLog(message);
+        }
+
+        public void Write(Category category, Exception exception, string message, params object[] arguments)
+        {
+            if (arguments.Length > 0)
+                AddLog(string.Format(CultureInfo.InvariantCulture, message, arguments));
+            else
+                AddLog(message);
+
+            if (exception != null)
+                AddLog(exception.Message);
         }
 
         public void AddLog(string text)
