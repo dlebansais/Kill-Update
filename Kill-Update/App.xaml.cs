@@ -23,12 +23,12 @@
         #region Init
         static App()
         {
-            KillUpdateCore.Logger = Logger.Write;
-
             Logger.Write(Category.Debug, "Starting");
         }
 
         private static ITracer Logger = Tracer.Create("Kill-Update");
+        private static KillUpdateCore Core = new KillUpdateCore(IsElevated, Settings, Logger);
+        private static readonly RegistryTools.Settings Settings = new RegistryTools.Settings("KillUpdate", "Settings");
 
         public App()
         {
@@ -63,7 +63,7 @@
         #endregion
 
         #region Properties
-        public bool IsElevated
+        public static bool IsElevated
         {
             get
             {
@@ -87,9 +87,9 @@
                 return _IsElevated.Value;
             }
         }
-        private bool? _IsElevated;
+        private static bool? _IsElevated;
 
-        public string ToolTipText
+        public static string ToolTipText
         {
             get
             {
@@ -99,10 +99,6 @@
                     return "Lock/Unlock Windows updates (Requires administrator mode)";
             }
         }
-        #endregion
-
-        #region Settings
-        private readonly RegistryTools.Settings Settings = new RegistryTools.Settings("KillUpdate", "Settings");
         #endregion
 
         #region Taskbar Icon
@@ -166,7 +162,7 @@
 
             if (UseUacIcon)
             {
-                if (KillUpdateCore.LoadEmbeddedResource(BitmapName, out Bitmap Bitmap))
+                if (Core.LoadEmbeddedResource(BitmapName, out Bitmap Bitmap))
                 {
                     Logger.Write(Category.Debug, $"Resource {BitmapName} loaded");
                     LoadAtStartup.Icon = Bitmap;
@@ -180,12 +176,12 @@
 
             bool IsLockEnabled;
 
-            if (!StartType.HasValue)
+            if (!Core.StartType.HasValue)
                 IsLockEnabled = false;
             else
             {
                 IsLockEnabled = IsElevated;
-                if (StartType == ServiceStartMode.Disabled)
+                if (Core.StartType == ServiceStartMode.Disabled)
                     LockMenu.IsChecked = true;
             }
 
@@ -194,7 +190,7 @@
             AddContextMenuSeparator(contextMenu);
             AddContextMenu(contextMenu, ExitMenu, true, true);
 
-            Icon = KillUpdateCore.LoadCurrentIcon(IsElevated, LockMenu.IsChecked);
+            Icon = Core.LoadCurrentIcon(IsElevated, LockMenu.IsChecked);
 
             Logger.Write(Category.Debug, "Menu created");
         }
@@ -262,10 +258,10 @@
         {
             Logger.Write(Category.Debug, "OnStartup");
 
-            InitTimer();
-            InitServiceManager();
+            Core.InitTimer(Dispatcher);
+            Core.InitServiceManager();
             InitTaskbarIcon();
-            KillUpdateCore.InitZombification();
+            Core.InitZombification();
 
             Exit += OnExit;
         }
@@ -282,21 +278,22 @@
         {
             Logger.Write(Category.Debug, "OnCommandLock");
 
-            TaskbarIcon.ToggleMenuCheck(LockCommand, out bool LockIt);
-            Settings.SetBool(LockedSettingName, LockIt);
-            ChangeLockMode(LockIt);
+            Core.ToggleLock();
 
-            if (IsLockModeChanged)
+            bool IsLockEnabled = Core.IsLockEnabled;
+            TaskbarIcon.SetMenuCheck(LockCommand, Core.IsLockEnabled);
+
+            if (Core.IsLockModeChanged)
             {
-                IsLockModeChanged = false;
+                Core.IsLockModeChanged = false;
 
                 using Icon OldIcon = AppIcon;
 
-                AppIcon = KillUpdateCore.LoadCurrentIcon(IsElevated, LockIt);
+                AppIcon = Core.LoadCurrentIcon(IsElevated, IsLockEnabled);
                 AppTaskbarIcon.UpdateIcon(AppIcon);
             }
 
-            Logger.Write(Category.Information, $"Lock mode: {LockIt}");
+            Logger.Write(Category.Information, $"Lock mode: {IsLockEnabled}");
         }
 
         private void OnCommandExit(object sender, ExecutedRoutedEventArgs e)
@@ -310,9 +307,9 @@
         {
             Logger.Write(Category.Debug, "Exiting application");
 
-            KillUpdateCore.ExitZombification();
+            Core.ExitZombification();
 
-            StopTimer();
+            Core.StopTimer();
 
             if (InstanceEvent != null)
             {
@@ -326,191 +323,6 @@
 
             Logger.Write(Category.Debug, "Done");
         }
-        #endregion
-
-        #region Service Manager
-        private void InitServiceManager()
-        {
-            Logger.Write(Category.Debug, "InitServiceManager starting");
-
-            if (Settings.IsValueSet(LockedSettingName))
-                if (IsSettingLock)
-                    StartType = ServiceStartMode.Disabled;
-                else
-                    StartType = ServiceStartMode.Manual;
-
-            OnUpdate();
-
-            UpdateTimer.Change(CheckInterval, CheckInterval);
-            FullRestartTimer.Change(FullRestartInterval, Timeout.InfiniteTimeSpan);
-            UpdateWatch.Start();
-
-            Logger.Write(Category.Debug, "InitServiceManager done");
-        }
-
-        private bool IsLockEnabled 
-        { 
-            get 
-            { 
-                return (StartType.HasValue && StartType == ServiceStartMode.Disabled); 
-            }
-        }
-
-        private bool IsSettingLock 
-        { 
-            get 
-            {
-                Settings.GetBool(LockedSettingName, true, out bool Result);
-                return Result;
-            }
-        }
-
-        private void UpdateService(ServiceStartMode? previousStartType, bool lockIt)
-        {
-            ServiceController[] Services = ServiceController.GetServices();
-            if (Services == null)
-                Logger.Write(Category.Error, "Failed to get services");
-            else
-            {
-                Logger.Write(Category.Debug, $"Found {Services.Length} service(s)");
-
-                foreach (ServiceController Service in Services)
-                    if (Service.ServiceName == WindowsUpdateServiceName)
-                    {
-                        Logger.Write(Category.Debug, $"Checking {Service.ServiceName}");
-
-                        StartType = Service.StartType;
-
-                        Logger.Write(Category.Debug, $"Current start type: {StartType}");
-
-                        if (previousStartType.HasValue && previousStartType.Value != StartType.Value)
-                        {
-                            Logger.Write(Category.Information, "Start type changed");
-
-                            ChangeLockMode(Service, lockIt);
-                        }
-
-                        StopIfRunning(Service, lockIt);
-
-                        previousStartType = StartType;
-                        break;
-                    }
-            }
-        }
-
-        private void ChangeLockMode(bool lockIt)
-        {
-            Logger.Write(Category.Debug, "ChangeLockMode starting");
-
-            try
-            {
-                using ServiceController Service = new ServiceController(WindowsUpdateServiceName);
-
-                if (IsElevated)
-                    ChangeLockMode(Service, lockIt);
-                else
-                    Logger.Write(Category.Warning, "Not elevated, cannot change");
-            }
-            catch (Exception e)
-            {
-                Logger.Write(Category.Error, $"(from ChangeLockMode) {e.Message}");
-            }
-        }
-
-        private void ChangeLockMode(ServiceController Service, bool lockIt)
-        {
-            IsLockModeChanged = true;
-            ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
-            NativeMethods.ChangeStartMode(Service, NewStartType, out _);
-
-            StartType = NewStartType;
-            Logger.Write(Category.Debug, $"Service type={StartType}");
-        }
-
-        private static void StopIfRunning(ServiceController Service, bool lockIt)
-        {
-            if (lockIt && Service.Status == ServiceControllerStatus.Running && Service.CanStop)
-            {
-                Logger.Write(Category.Debug, "Stopping service");
-                Service.Stop();
-                Logger.Write(Category.Debug, "Service stopped");
-            }
-        }
-
-        private const string WindowsUpdateServiceName = "wuauserv";
-        private const string LockedSettingName = "Locked";
-        private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
-        private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
-        private ServiceStartMode? StartType;
-        private bool IsLockModeChanged;
-        #endregion
-
-        #region Timer
-        private void InitTimer()
-        {
-            UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
-            FullRestartTimer = new Timer(new TimerCallback(FullRestartTimerCallback));
-        }
-
-        private void UpdateTimerCallback(object parameter)
-        {
-            // Protection against reentering too many times after a sleep/wake up.
-            if (UpdateWatch.Elapsed.Seconds < CheckInterval.Seconds / 2)
-                return;
-
-            Dispatcher.BeginInvoke(new OnUpdateHandler(OnUpdate));
-        }
-
-        private void FullRestartTimerCallback(object parameter)
-        {
-            if (UpdateTimer != null)
-            {
-                Logger.Write(Category.Debug, "Restarting the timer");
-
-                // Restart the update timer from scratch.
-                UpdateTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-
-                UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
-                UpdateTimer.Change(CheckInterval, CheckInterval);
-
-                Logger.Write(Category.Debug, "Timer restarted");
-            }
-            else
-                Logger.Write(Category.Warning, "No timer to restart");
-
-            FullRestartTimer.Change(FullRestartInterval, Timeout.InfiniteTimeSpan);
-            Logger.Write(Category.Debug, $"Next check scheduled at {DateTime.UtcNow + FullRestartInterval}");
-        }
-
-        private delegate void OnUpdateHandler();
-        private void OnUpdate()
-        {
-            UpdateWatch.Restart();
-
-            try
-            {
-                ServiceStartMode? PreviousStartType = StartType;
-                Settings.GetBool(LockedSettingName, true, out bool LockIt);
-
-                UpdateService(PreviousStartType, LockIt);
-
-                ZombifyMe.Zombification.SetAlive();
-            }
-            catch (Exception e)
-            {
-                Logger.Write(Category.Error, $"(from OnUpdate) {e.Message}");
-            }
-        }
-
-        private void StopTimer()
-        {
-            FullRestartTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            UpdateTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-        }
-
-        private Timer UpdateTimer = null!;
-        private Timer FullRestartTimer = null!;
-        private Stopwatch UpdateWatch = new Stopwatch();
         #endregion
 
         #region Load at startup
@@ -579,11 +391,7 @@
         /// </summary>
         private void DisposeNow()
         {
-            using (UpdateTimer)
-            {
-            }
-
-            using (FullRestartTimer)
+            using (Core)
             {
             }
 

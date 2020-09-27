@@ -32,9 +32,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RegistryTools">
+      <HintPath>..\Dependencies\RegistryTools\$(Platform)\$(Configuration)\RegistryTools.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,6 +48,7 @@
     <Reference Include="Tracing, Version=2.2.19302.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Tracing.2.2.19302.1\lib\net45\Tracing.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="ZombifyMe">
       <HintPath>..\Dependencies\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
     </Reference>
@@ -51,6 +56,7 @@
   <ItemGroup>
     <Compile Include="Kill-Update-Core.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
