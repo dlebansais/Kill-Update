@@ -74,6 +74,19 @@
         }
         #endregion
 
+        #region Tooltip
+        public string ToolTip
+        {
+            get
+            {
+                if (IsElevated)
+                    return "Lock/Unlock Windows updates";
+                else
+                    return "Lock/Unlock Windows updates (Requires administrator mode)";
+            }
+        }
+        #endregion
+
         #region Zombification
         public bool IsRestart { get { return ZombifyMe.Zombification.IsRestart; } }
 

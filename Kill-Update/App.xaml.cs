@@ -1,37 +1,33 @@
 ﻿namespace KillUpdate
 {
+    using RegistryTools;
     using SchedulerTools;
     using System;
     using System.Collections.Generic;
-    using System.IO;
+    using System.Drawing;
     using System.Reflection;
     using System.Security.Principal;
     using System.ServiceProcess;
     using System.Threading;
     using System.Windows;
-    using System.Drawing;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using System.Windows.Threading;
     using TaskbarTools;
-    using System.Diagnostics;
-    using System.Globalization;
     using Tracing;
 
     public partial class App : Application, IDisposable
     {
         #region Init
-        static App()
-        {
-            Logger.Write(Category.Debug, "Starting");
-        }
-
-        private static ITracer Logger = Tracer.Create("Kill-Update");
-        private static KillUpdateCore Core = new KillUpdateCore(IsElevated, Settings, Logger);
-        private static readonly RegistryTools.Settings Settings = new RegistryTools.Settings("KillUpdate", "Settings");
-
         public App()
         {
+            Logger = Tracer.Create("Kill-Update");
+            Logger.Write(Category.Debug, "Starting");
+            Logger.Write(Category.Information, $"IsElevated={_IsElevated}");
+
+            Settings = new Settings("KillUpdate", "Settings");
+            Core = new KillUpdateCore(IsElevated, Settings, Logger);
+
+
             // Ensure only one instance is running at a time.
             Logger.Write(Category.Debug, "Checking uniqueness");
             try
@@ -59,6 +55,21 @@
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
 
+        private void OnStartup(object sender, StartupEventArgs e)
+        {
+            Logger.Write(Category.Debug, "OnStartup");
+
+            Core.InitTimer(Dispatcher);
+            Core.InitServiceManager();
+            InitTaskbarIcon();
+            Core.InitZombification();
+
+            Exit += OnExit;
+        }
+
+        private ITracer Logger;
+        private readonly Settings Settings;
+        private KillUpdateCore Core;
         private EventWaitHandle? InstanceEvent;
         #endregion
 
@@ -80,8 +91,6 @@
                     }
                     else
                         _IsElevated = false;
-
-                    Logger.Write(Category.Information, $"IsElevated={_IsElevated}");
                 }
 
                 return _IsElevated.Value;
@@ -89,16 +98,7 @@
         }
         private static bool? _IsElevated;
 
-        public static string ToolTipText
-        {
-            get
-            {
-                if (IsElevated)
-                    return "Lock/Unlock Windows updates";
-                else
-                    return "Lock/Unlock Windows updates (Requires administrator mode)";
-            }
-        }
+        public string ToolTipText { get { return Core.ToolTip; } }
         #endregion
 
         #region Taskbar Icon
@@ -226,6 +226,17 @@
             menu.Items.Add(new Separator());
         }
 
+        private TaskbarIcon AppTaskbarIcon = TaskbarIcon.Empty;
+        private Icon AppIcon = null !;
+        private string LoadAtStartupHeader { get { return (string)TryFindResource("LoadAtStartupHeader"); } }
+        private string RemoveFromStartupHeader { get { return (string)TryFindResource("RemoveFromStartupHeader"); } }
+        private ICommand LoadAtStartupCommand = null!;
+        private ICommand LockCommand = null!;
+        private ICommand ExitCommand = null!;
+        private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
+        #endregion
+
+        #region Events
         private void OnMenuOpening(object sender, EventArgs e)
         {
             Logger.Write(Category.Debug, "OnMenuOpening");
@@ -241,29 +252,6 @@
                 else
                     TaskbarIcon.SetMenuText(LoadAtStartupCommand, LoadAtStartupHeader);
             }
-        }
-
-        private TaskbarIcon AppTaskbarIcon = TaskbarIcon.Empty;
-        private Icon AppIcon = null !;
-        private string LoadAtStartupHeader { get { return (string)TryFindResource("LoadAtStartupHeader"); } }
-        private string RemoveFromStartupHeader { get { return (string)TryFindResource("RemoveFromStartupHeader"); } }
-        private ICommand LoadAtStartupCommand = null!;
-        private ICommand LockCommand = null!;
-        private ICommand ExitCommand = null!;
-        private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
-        #endregion
-
-        #region Events
-        private void OnStartup(object sender, StartupEventArgs e)
-        {
-            Logger.Write(Category.Debug, "OnStartup");
-
-            Core.InitTimer(Dispatcher);
-            Core.InitServiceManager();
-            InitTaskbarIcon();
-            Core.InitZombification();
-
-            Exit += OnExit;
         }
 
         private void OnCommandLoadAtStartup(object sender, ExecutedRoutedEventArgs e)

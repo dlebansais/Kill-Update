@@ -1,19 +1,14 @@
-﻿using RegistryTools;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.ServiceProcess;
-using System.Threading;
-using System.Windows.Input;
-using System.Windows.Threading;
-using TaskbarIconHost;
-using Tracing;
-
-namespace KillUpdate
+﻿namespace KillUpdate
 {
+    using RegistryTools;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Windows.Input;
+    using System.Windows.Threading;
+    using TaskbarIconHost;
+    using Tracing;
+
     public class KillUpdatePlugin : IPluginClient, IDisposable
     {
         #region Plugin
@@ -154,16 +149,7 @@ namespace KillUpdate
             return false;
         }
 
-        public string ToolTip
-        {
-            get
-            {
-                if (IsElevated)
-                    return "Lock/Unlock Windows updates";
-                else
-                    return "Lock/Unlock Windows updates (Requires administrator mode)";
-            }
-        }
+        public string ToolTip { get { return Core.ToolTip; } }
 
         public void OnActivated()
         {
@@ -191,7 +177,7 @@ namespace KillUpdate
 
         public bool IsElevated { get; private set; }
         public Dispatcher Dispatcher { get; private set; } = null !;
-        public RegistryTools.Settings Settings { get; private set; } = null !;
+        public Settings Settings { get; private set; } = null !;
         public ITracer Logger { get; private set; } = null !;
 
         private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
