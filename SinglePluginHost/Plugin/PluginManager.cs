@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Windows.Input;
-using System.Windows.Threading;
-using System.Security.Cryptography.X509Certificates;
-using System.Globalization;
-using Tracing;
-
-namespace TaskbarIconHost
+﻿namespace TaskbarIconHost
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.Reflection;
+    using System.Threading;
+    using System.Windows.Input;
+    using System.Windows.Threading;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Globalization;
+    using Tracing;
+
     public static class PluginManager
     {
         public static bool Init(bool isElevated, string embeddedPluginName, Guid embeddedPluginGuid, Dispatcher dispatcher, ITracer logger)

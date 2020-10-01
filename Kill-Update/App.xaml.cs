@@ -1,7 +1,5 @@
 ﻿namespace KillUpdate
 {
-    using RegistryTools;
-    using SchedulerTools;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
@@ -12,6 +10,8 @@
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
+    using RegistryTools;
+    using SchedulerTools;
     using TaskbarTools;
     using Tracing;
 
@@ -22,11 +22,10 @@
         {
             Logger = Tracer.Create("Kill-Update");
             Logger.Write(Category.Debug, "Starting");
-            Logger.Write(Category.Information, $"IsElevated={_IsElevated}");
+            Logger.Write(Category.Information, $"IsElevated={IsElevatedInternal}");
 
             Settings = new Settings("KillUpdate", "Settings");
             Core = new KillUpdateCore(IsElevated, Settings, Logger);
-
 
             // Ensure only one instance is running at a time.
             Logger.Write(Category.Debug, "Checking uniqueness");
@@ -78,25 +77,25 @@
         {
             get
             {
-                if (_IsElevated == null)
+                if (IsElevatedInternal == null)
                 {
                     WindowsIdentity wi = WindowsIdentity.GetCurrent();
                     if (wi != null)
                     {
                         WindowsPrincipal wp = new WindowsPrincipal(wi);
                         if (wp != null)
-                            _IsElevated = wp.IsInRole(WindowsBuiltInRole.Administrator);
+                            IsElevatedInternal = wp.IsInRole(WindowsBuiltInRole.Administrator);
                         else
-                            _IsElevated = false;
+                            IsElevatedInternal = false;
                     }
                     else
-                        _IsElevated = false;
+                        IsElevatedInternal = false;
                 }
 
-                return _IsElevated.Value;
+                return IsElevatedInternal.Value;
             }
         }
-        private static bool? _IsElevated;
+        private static bool? IsElevatedInternal;
 
         public string ToolTipText { get { return Core.ToolTip; } }
         #endregion
@@ -130,7 +129,7 @@
             return Command;
         }
 
-        private void LoadContextMenu(out ContextMenu contextMenu, out Icon Icon)
+        private void LoadContextMenu(out ContextMenu contextMenu, out Icon icon)
         {
             contextMenu = new ContextMenu();
 
@@ -162,7 +161,7 @@
 
             if (UseUacIcon)
             {
-                if (Core.LoadEmbeddedResource(BitmapName, out Bitmap Bitmap))
+                if (KillUpdateCore.LoadEmbeddedResource(BitmapName, out Bitmap Bitmap))
                 {
                     Logger.Write(Category.Debug, $"Resource {BitmapName} loaded");
                     LoadAtStartup.Icon = Bitmap;
@@ -190,7 +189,7 @@
             AddContextMenuSeparator(contextMenu);
             AddContextMenu(contextMenu, ExitMenu, true, true);
 
-            Icon = Core.LoadCurrentIcon(IsElevated, LockMenu.IsChecked);
+            icon = Core.LoadCurrentIcon(IsElevated, LockMenu.IsChecked);
 
             Logger.Write(Category.Debug, "Menu created");
         }

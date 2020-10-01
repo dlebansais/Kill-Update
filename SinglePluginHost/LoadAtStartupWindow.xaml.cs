@@ -1,12 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Input;
-
-namespace TaskbarIconHost
+﻿namespace TaskbarIconHost
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Input;
+
     public partial class LoadAtStartupWindow : Window
     {
         #region Init

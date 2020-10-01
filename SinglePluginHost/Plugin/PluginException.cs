@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace TaskbarIconHost
+﻿namespace TaskbarIconHost
 {
+    using System;
+
 #pragma warning disable CA1032 // Implement standard exception constructors
 #pragma warning disable CA2237 // Mark ISerializable types with serializable
     public class PluginException : Exception

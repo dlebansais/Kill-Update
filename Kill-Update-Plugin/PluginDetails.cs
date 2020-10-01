@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace TaskbarIconHost
+﻿namespace TaskbarIconHost
 {
+    using System;
+
     public static class PluginDetails
     {
         public static readonly string Name = "Kill-Update";

@@ -7,7 +7,7 @@ using System.ServiceProcess;
 internal static class NativeMethods
 {
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern Boolean ChangeServiceConfig(
+    public static extern bool ChangeServiceConfig(
         IntPtr hService,
         uint nServiceType,
         uint nStartType,
@@ -21,7 +21,7 @@ internal static class NativeMethods
         string? lpDisplayName);
 
     [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    static extern IntPtr OpenService(IntPtr hScManager, string lpServiceName, uint dwDesiredAccess);
+    public static extern IntPtr OpenService(IntPtr hScManager, string lpServiceName, uint dwDesiredAccess);
 
     [DllImport("advapi32.dll", EntryPoint = "OpenSCManagerW", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr OpenSCManager(string? machineName, string? databaseName, uint dwAccess);
@@ -36,34 +36,38 @@ internal static class NativeMethods
 
     public static bool ChangeStartMode(ServiceController svc, ServiceStartMode mode, out int error)
     {
+        bool result = false;
         error = 0;
 
         var scManagerHandle = OpenSCManager(null, null, ScManagerAllAccess);
-        Debug.Assert(scManagerHandle != IntPtr.Zero);
+        if (scManagerHandle != IntPtr.Zero)
+        {
+            var serviceHandle = OpenService(scManagerHandle, svc.ServiceName, ServiceQueryConfig | ServiceChangeConfig);
+            if (serviceHandle != IntPtr.Zero)
+            {
+                result = ChangeServiceConfig(
+                    serviceHandle,
+                    ServiceNoChange,
+                    (uint)mode,
+                    ServiceNoChange,
+                    null,
+                    null,
+                    IntPtr.Zero,
+                    null,
+                    null,
+                    null,
+                    null);
 
-        var serviceHandle = OpenService(scManagerHandle, svc.ServiceName, ServiceQueryConfig | ServiceChangeConfig);
-        Debug.Assert(serviceHandle != IntPtr.Zero);
+                if (!result)
+                    error = Marshal.GetLastWin32Error();
 
-        bool result = ChangeServiceConfig(
-            serviceHandle,
-            ServiceNoChange,
-            (uint)mode,
-            ServiceNoChange,
-            null,
-            null,
-            IntPtr.Zero,
-            null,
-            null,
-            null,
-            null);
+                int hResult = CloseServiceHandle(serviceHandle);
+                Debug.Assert(hResult == 0, "Failed to close the service");
 
-        if (!result)
-            error = Marshal.GetLastWin32Error();
-
-        int hResult = CloseServiceHandle(serviceHandle);
-        Debug.Assert(hResult == 0);
-        hResult = CloseServiceHandle(scManagerHandle);
-        Debug.Assert(hResult == 0);
+                hResult = CloseServiceHandle(scManagerHandle);
+                Debug.Assert(hResult == 0, "Failed to close the service manager");
+            }
+        }
 
         return result;
     }

@@ -1,6 +1,5 @@
 ﻿namespace KillUpdate
 {
-    using RegistryTools;
     using System;
     using System.Diagnostics;
     using System.Drawing;
@@ -9,6 +8,7 @@
     using System.ServiceProcess;
     using System.Threading;
     using System.Windows.Threading;
+    using RegistryTools;
     using Tracing;
 
     public class KillUpdateCore : IDisposable
@@ -49,7 +49,7 @@
             return Result;
         }
 
-        public bool LoadEmbeddedResource<T>(string resourceName, out T resource)
+        public static bool LoadEmbeddedResource<T>(string resourceName, out T resource)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string ResourcePath = string.Empty;
@@ -88,7 +88,7 @@
         #endregion
 
         #region Zombification
-        public bool IsRestart { get { return ZombifyMe.Zombification.IsRestart; } }
+        public static bool IsRestart { get { return ZombifyMe.Zombification.IsRestart; } }
 
         public void InitZombification()
         {
@@ -145,7 +145,7 @@
         {
             get
             {
-                return (StartType.HasValue && StartType == ServiceStartMode.Disabled);
+                return StartType.HasValue && StartType == ServiceStartMode.Disabled;
             }
         }
 
@@ -212,29 +212,31 @@
                 else
                     Logger.Write(Category.Warning, "Not elevated, cannot change");
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception e)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 Logger.Write(Category.Error, $"(from ChangeLockMode) {e.Message}");
             }
         }
 
-        private void ChangeLockMode(ServiceController Service, bool lockIt)
+        private void ChangeLockMode(ServiceController service, bool lockIt)
         {
             IsLockModeChanged = true;
             ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
-            NativeMethods.ChangeStartMode(Service, NewStartType, out _);
+            NativeMethods.ChangeStartMode(service, NewStartType, out _);
 
             StartType = NewStartType;
-            Logger.Write(Category.Debug, $"Service type={StartType}");
+            Logger.Write(Category.Debug, $"service type={StartType}");
         }
 
-        private void StopIfRunning(ServiceController Service, bool lockIt)
+        private void StopIfRunning(ServiceController service, bool lockIt)
         {
-            if (lockIt && Service.Status == ServiceControllerStatus.Running && Service.CanStop)
+            if (lockIt && service.Status == ServiceControllerStatus.Running && service.CanStop)
             {
                 Logger.Write(Category.Debug, "Stopping service");
-                Service.Stop();
-                Logger.Write(Category.Debug, "Service stopped");
+                service.Stop();
+                Logger.Write(Category.Debug, "service stopped");
             }
         }
 
@@ -264,7 +266,9 @@
 
                 Logger.Write(Category.Debug, "%% Timer callback completed");
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception e)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 Logger.Write(Category.Debug, $"(from OnUpdate) {e.Message}");
             }
@@ -274,7 +278,7 @@
         private const string LockedSettingName = "Locked";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
         private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
-        public ServiceStartMode? StartType;
+        public ServiceStartMode? StartType { get; private set; }
         public bool IsLockModeChanged { get; set; }
         #endregion
 

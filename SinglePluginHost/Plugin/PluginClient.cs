@@ -1,14 +1,14 @@
-﻿using RegistryTools;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
-using System.Windows.Input;
-using System.Windows.Threading;
-using Tracing;
-
-namespace TaskbarIconHost
+﻿namespace TaskbarIconHost
 {
+    using RegistryTools;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Threading;
+    using System.Windows.Input;
+    using System.Windows.Threading;
+    using Tracing;
+
     public class PluginClient : IPluginClient
     {
         public PluginClient(object pluginHandle, string name, Guid guid, bool requireElevated, bool hasClickHandler, EventWaitHandle? instanceEvent)

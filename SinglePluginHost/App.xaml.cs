@@ -1,7 +1,5 @@
 ﻿namespace TaskbarIconHost
 {
-    using RegistryTools;
-    using SchedulerTools;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -15,6 +13,8 @@
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Threading;
+    using RegistryTools;
+    using SchedulerTools;
     using TaskbarTools;
     using Tracing;
 
@@ -170,6 +170,7 @@
                 return _IsElevated.Value;
             }
         }
+
         private bool? _IsElevated;
         #endregion
 
@@ -329,7 +330,6 @@
             // Below load at startup, we add plugin menus.
             // Separate them in two categories, small and large. Small menus are always directly visible in the main context menu.
             // Large plugin menus, if there is more than one, have their own submenu. If there is just one plugin with a large menu we don't bother.
-
             Dictionary<List<MenuItem?>, string> FullPluginMenuList = new Dictionary<List<MenuItem?>, string>();
             int LargePluginMenuCount = 0;
 

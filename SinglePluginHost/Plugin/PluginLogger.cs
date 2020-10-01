@@ -1,12 +1,12 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using Tracing;
-
-namespace TaskbarIconHost
+﻿namespace TaskbarIconHost
 {
+    using System;
+    using System.Globalization;
+    using System.IO;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+    using Tracing;
+
     public class PluginLogger : ITracer
     {
         public PluginLogger()

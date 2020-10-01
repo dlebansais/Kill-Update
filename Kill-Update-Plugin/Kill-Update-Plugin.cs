@@ -1,11 +1,11 @@
 ﻿namespace KillUpdate
 {
-    using RegistryTools;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.Windows.Input;
     using System.Windows.Threading;
+    using RegistryTools;
     using TaskbarIconHost;
     using Tracing;
 
@@ -127,11 +127,11 @@
 
         public Bitmap SelectionBitmap
         {
-            get 
+            get
             {
                 string ResourceName = "Kill-Update.png";
 
-                if (Core.LoadEmbeddedResource(ResourceName, out Bitmap Bitmap))
+                if (KillUpdateCore.LoadEmbeddedResource(ResourceName, out Bitmap Bitmap))
                     Logger.Write(Category.Debug, $"Resource {ResourceName} loaded");
                 else
                     Logger.Write(Category.Error, $"Resource {ResourceName} not found");
@@ -232,7 +232,7 @@
         private void DisposeNow()
         {
             using (Core)
-            { 
+            {
             }
         }
         #endregion
