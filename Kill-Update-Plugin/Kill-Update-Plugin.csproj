@@ -47,7 +47,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="RegistryTools">
-      <HintPath>..\Dependencies\RegistryTools\$(Platform)\$(Configuration)\RegistryTools.dll</HintPath>
+      <HintPath>..\dependencies\RegistryTools\$(Platform)\$(Configuration)\RegistryTools.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,17 +60,17 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="TaskbarIconShared">
-      <HintPath>..\Dependencies\TaskbarIconShared\$(Platform)\$(Configuration)\TaskbarIconShared.dll</HintPath>
+      <HintPath>..\dependencies\TaskbarIconShared\$(Platform)\$(Configuration)\TaskbarIconShared.dll</HintPath>
     </Reference>
     <Reference Include="TaskbarTools">
-      <HintPath>..\Dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
+      <HintPath>..\dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
     </Reference>
     <Reference Include="Tracing, Version=2.2.19302.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Tracing.2.2.19302.1\lib\net45\Tracing.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="ZombifyMe">
-      <HintPath>..\Dependencies\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
+      <HintPath>..\dependencies\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +110,9 @@
       <Project>{7053eeae-8325-4837-a025-ebaafed6b6d8}</Project>
       <Name>Kill-Update-Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\UAC-16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">

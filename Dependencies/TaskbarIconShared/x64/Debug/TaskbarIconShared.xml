@@ -209,6 +209,22 @@
             </summary>
             <param name="name">The name of the "Embedded Resource" in the project.</param>
         </member>
+        <member name="M:TaskbarIconHost.ResourceTools.GetResourceName(System.Reflection.Assembly,System.String)">
+            <summary>
+            Returns an object of type <typeparam name="T"/> loaded from embedded resources.
+            </summary>
+            <param name="name">The name of the "Embedded Resource" in the project.</param>
+        </member>
+        <member name="M:TaskbarIconHost.ResourceTools.LoadEmbeddedResource``1(System.String,System.String,``0@)">
+            <summary>
+            Returns an object of type <typeparam name="T"/> loaded from embedded resources.
+            </summary>
+            <typeparam name="T">The resource type.</typeparam>
+            <param name="embeddedAssemblyName">Name of the embedded assembly.</param>
+            <param name="resourceName">Name of the "Embedded Resource" in the project.</param>
+            <param name="result">The loaded resource.</param>
+            <returns>True if the reosurce was found; otherwise, false.</returns>
+        </member>
         <member name="T:TaskbarIconHost.Taskbar">
             <summary>
             Class that provide some information about the Windows taskbar.

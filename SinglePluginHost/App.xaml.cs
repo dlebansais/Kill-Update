@@ -33,7 +33,7 @@
 
             try
             {
-                Guid AppGuid = PluginDetails.Guid;
+                Guid AppGuid = PluginDetails2.Guid;
                 if (AppGuid == Guid.Empty)
                 {
                     // In case the guid is provided by the project settings and not source code.
@@ -177,7 +177,7 @@
         #region Plugin Manager
         private bool InitPlugInManager()
         {
-            if (!PluginManager.Init(IsElevated, PluginDetails.AssemblyName, PluginDetails.Guid, Dispatcher, Logger))
+            if (!PluginManager.Init(IsElevated, PluginDetails2.AssemblyName, PluginDetails2.Guid, Dispatcher, Logger))
                 return false;
 
             // In the case of a single plugin version, this code won't do anything.
@@ -545,7 +545,7 @@
             {
                 // The user is changing the state.
                 TaskbarIcon.ToggleMenuCheck(LoadAtStartupCommand, out bool Install);
-                InstallLoad(Install, PluginDetails.Name);
+                InstallLoad(Install, PluginDetails2.Name);
             }
             else
             {
@@ -554,12 +554,12 @@
 
                 if (Scheduler.IsTaskActive(ExeName))
                 {
-                    RemoveFromStartupWindow Dlg = new RemoveFromStartupWindow(PluginDetails.Name);
+                    RemoveFromStartupWindow Dlg = new RemoveFromStartupWindow(PluginDetails2.Name);
                     Dlg.ShowDialog();
                 }
                 else
                 {
-                    LoadAtStartupWindow Dlg = new LoadAtStartupWindow(PluginManager.RequireElevated, PluginDetails.Name);
+                    LoadAtStartupWindow Dlg = new LoadAtStartupWindow(PluginManager.RequireElevated, PluginDetails2.Name);
                     Dlg.ShowDialog();
                 }
             }

@@ -44,7 +44,7 @@
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
     <Reference Include="RegistryTools">
-      <HintPath>..\Dependencies\RegistryTools\$(Platform)\$(Configuration)\RegistryTools.dll</HintPath>
+      <HintPath>..\dependencies\RegistryTools\$(Platform)\$(Configuration)\RegistryTools.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,7 +61,7 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="ZombifyMe">
-      <HintPath>..\Dependencies\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
+      <HintPath>..\dependencies\ZombifyMe\$(Platform)\$(Configuration)\ZombifyMe.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

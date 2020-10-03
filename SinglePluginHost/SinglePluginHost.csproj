@@ -66,10 +66,10 @@
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
     <Reference Include="RegistryTools">
-      <HintPath>..\Dependencies\RegistryTools\$(Platform)\$(Configuration)\RegistryTools.dll</HintPath>
+      <HintPath>..\dependencies\RegistryTools\$(Platform)\$(Configuration)\RegistryTools.dll</HintPath>
     </Reference>
     <Reference Include="SchedulerTools">
-      <HintPath>..\Dependencies\SchedulerTools\$(Platform)\$(Configuration)\SchedulerTools.dll</HintPath>
+      <HintPath>..\dependencies\SchedulerTools\$(Platform)\$(Configuration)\SchedulerTools.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -85,10 +85,10 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="TaskbarIconShared">
-      <HintPath>..\Dependencies\TaskbarIconShared\$(Platform)\$(Configuration)\TaskbarIconShared.dll</HintPath>
+      <HintPath>..\dependencies\TaskbarIconShared\$(Platform)\$(Configuration)\TaskbarIconShared.dll</HintPath>
     </Reference>
     <Reference Include="TaskbarTools">
-      <HintPath>..\Dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
+      <HintPath>..\dependencies\TaskbarTools\$(Platform)\$(Configuration)\TaskbarTools.dll</HintPath>
     </Reference>
     <Reference Include="Tracing, Version=2.2.19302.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Tracing.2.2.19302.1\lib\net45\Tracing.dll</HintPath>

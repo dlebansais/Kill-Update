@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Reflection;
     using System.Windows.Input;
     using System.Windows.Threading;
     using RegistryTools;
@@ -14,12 +15,12 @@
         #region Plugin
         public string Name
         {
-            get { return PluginDetails.Name; }
+            get { return PluginDetails2.Name; }
         }
 
         public Guid Guid
         {
-            get { return PluginDetails.Guid; }
+            get { return PluginDetails2.Guid; }
         }
 
         public bool RequireElevated
@@ -123,7 +124,38 @@
             return Result;
         }
 
-        public Icon Icon { get { return Core.LoadCurrentIcon(IsElevated, Core.IsLockEnabled); } }
+        public Icon Icon
+        {
+            get
+            {
+                return LoadCurrentIcon(IsElevated, Core.IsLockEnabled);
+            }
+        }
+
+        #region Icon & Bitmap
+        public Icon LoadCurrentIcon(bool isElevated, bool isLockEnabled)
+        {
+            string ResourceName;
+
+            if (isElevated)
+                if (isLockEnabled)
+                    ResourceName = "Locked-Enabled.ico";
+                else
+                    ResourceName = "Unlocked-Enabled.ico";
+            else
+                if (isLockEnabled)
+                ResourceName = "Locked-Disabled.ico";
+            else
+                ResourceName = "Unlocked-Disabled.ico";
+
+            if (ResourceTools.LoadEmbeddedResource(PluginDetails2.AssemblyName, ResourceName, out Icon Icon))
+                Logger.Write(Category.Debug, $"Resource {ResourceName} loaded");
+            else
+                Logger.Write(Category.Debug, $"Resource {ResourceName} not found");
+
+            return Icon;
+        }
+        #endregion
 
         public Bitmap SelectionBitmap
         {
@@ -131,7 +163,7 @@
             {
                 string ResourceName = "Kill-Update.png";
 
-                if (KillUpdateCore.LoadEmbeddedResource(ResourceName, out Bitmap Bitmap))
+                if (ResourceTools.LoadEmbeddedResource(PluginDetails2.AssemblyName, ResourceName, out Bitmap Bitmap))
                     Logger.Write(Category.Debug, $"Resource {ResourceName} loaded");
                 else
                     Logger.Write(Category.Error, $"Resource {ResourceName} not found");

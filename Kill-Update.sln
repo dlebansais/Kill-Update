@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update-Exe", "Kill-Update-Exe\Kill-Update-Exe.csproj", "{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -38,6 +40,10 @@ Global
 		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Debug|x64.Build.0 = Debug|x64
 		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Release|x64.ActiveCfg = Release|x64
 		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Release|x64.Build.0 = Release|x64
+		{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}.Debug|x64.ActiveCfg = Debug|x64
+		{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}.Debug|x64.Build.0 = Debug|x64
+		{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}.Release|x64.ActiveCfg = Release|x64
+		{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
