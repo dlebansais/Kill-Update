@@ -13,15 +13,9 @@
     public class KillUpdatePlugin : IPluginClient, IDisposable
     {
         #region Plugin
-        public string Name
-        {
-            get { return PluginDetails2.Name; }
-        }
-
-        public Guid Guid
-        {
-            get { return PluginDetails2.Guid; }
-        }
+        public string Name { get; } = "Kill-Update";
+        public Guid Guid { get; } = new Guid("{FFFFFFFF-E9B9-4E5D-AD4C-489A017748A5}");
+        public string AssemblyName { get; } = "Kill-Update-Plugin";
 
         public bool RequireElevated
         {
@@ -148,7 +142,7 @@
             else
                 ResourceName = "Unlocked-Disabled.ico";
 
-            if (ResourceTools.LoadEmbeddedResource(PluginDetails2.AssemblyName, ResourceName, out Icon Icon))
+            if (ResourceTools.LoadEmbeddedResource(AssemblyName, ResourceName, out Icon Icon))
                 Logger.Write(Category.Debug, $"Resource {ResourceName} loaded");
             else
                 Logger.Write(Category.Debug, $"Resource {ResourceName} not found");
@@ -163,7 +157,7 @@
             {
                 string ResourceName = "Kill-Update.png";
 
-                if (ResourceTools.LoadEmbeddedResource(PluginDetails2.AssemblyName, ResourceName, out Bitmap Bitmap))
+                if (ResourceTools.LoadEmbeddedResource(AssemblyName, ResourceName, out Bitmap Bitmap))
                     Logger.Write(Category.Debug, $"Resource {ResourceName} loaded");
                 else
                     Logger.Write(Category.Error, $"Resource {ResourceName} not found");

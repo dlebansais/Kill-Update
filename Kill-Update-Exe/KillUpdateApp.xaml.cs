@@ -11,7 +11,7 @@
         public KillUpdateApp()
         {
             Plugin = new KillUpdatePlugin();
-            PluginApp = new App(this, new PluginDetails(Plugin.Name, Plugin.Guid, "Kill-Update-Plugin"));
+            PluginApp = new App(this, Plugin, Plugin.AssemblyName);
         }
 
         private KillUpdatePlugin Plugin;
