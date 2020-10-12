@@ -86,8 +86,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="TaskbarTools, Version=1.0.3.1, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\TaskbarTools.1.0.3\lib\net48\TaskbarTools.dll</HintPath>
+    <Reference Include="TaskbarTools, Version=1.0.3.4, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\TaskbarTools.1.1.0\lib\net48\TaskbarTools.dll</HintPath>
     </Reference>
     <Reference Include="Tracing, Version=2.2.19302.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Tracing.2.2.19302.1\lib\net45\Tracing.dll</HintPath>

@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update", "Kill-Update\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update-Plugin", "Kill-Update-Plugin\Kill-Update-Plugin.csproj", "{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SinglePluginHost", "SinglePluginHost\SinglePluginHost.csproj", "{1AA662FD-9DDE-4638-B2B5-2367268B5B96}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kill-Update-Core", "Kill-Update-Core\Kill-Update-Core.csproj", "{7053EEAE-8325-4837-A025-EBAAFED6B6D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{94EA017F-579A-486D-8E54-3003334B145F}"
@@ -32,10 +30,6 @@ Global
 		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Debug|x64.Build.0 = Debug|x64
 		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Release|x64.ActiveCfg = Release|x64
 		{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}.Release|x64.Build.0 = Release|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Debug|x64.ActiveCfg = Debug|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Debug|x64.Build.0 = Debug|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.ActiveCfg = Release|x64
-		{1AA662FD-9DDE-4638-B2B5-2367268B5B96}.Release|x64.Build.0 = Release|x64
 		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Debug|x64.ActiveCfg = Debug|x64
 		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Debug|x64.Build.0 = Debug|x64
 		{7053EEAE-8325-4837-A025-EBAAFED6B6D8}.Release|x64.ActiveCfg = Release|x64

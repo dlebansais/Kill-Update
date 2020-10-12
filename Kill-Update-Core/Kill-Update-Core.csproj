@@ -93,8 +93,8 @@
     <Reference Include="TaskbarIconShared, Version=1.0.0.362, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\TaskbarIconHost.1.0.0\lib\net48\TaskbarIconShared.dll</HintPath>
     </Reference>
-    <Reference Include="TaskbarTools, Version=1.0.3.1, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\TaskbarTools.1.0.3\lib\net48\TaskbarTools.dll</HintPath>
+    <Reference Include="TaskbarTools, Version=1.0.3.4, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\TaskbarTools.1.1.0\lib\net48\TaskbarTools.dll</HintPath>
     </Reference>
     <Reference Include="Test-Plugin, Version=1.0.0.362, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\TaskbarIconHost.1.0.0\lib\net48\Test-Plugin.dll</HintPath>
