@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace KillUpdate.Properties {
+namespace KillUpdateExe.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace KillUpdate.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("KillUpdate.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("KillUpdateExe.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,24 +57,6 @@ namespace KillUpdate.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Load at startup.
-        /// </summary>
-        internal static string LoadAtStartupHeader {
-            get {
-                return ResourceManager.GetString("LoadAtStartupHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove from startup.
-        /// </summary>
-        internal static string RemoveFromStartupHeader {
-            get {
-                return ResourceManager.GetString("RemoveFromStartupHeader", resourceCulture);
             }
         }
     }
