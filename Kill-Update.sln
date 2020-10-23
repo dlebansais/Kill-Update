@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kill-Update-Plugin", "Kill-Update-Plugin\Kill-Update-Plugin.csproj", "{3F3A2AF4-A095-4715-B807-AAA8B1089AD7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B915ABF1-9AA0-4807-AE83-C8300CE75574} = {B915ABF1-9AA0-4807-AE83-C8300CE75574}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{94EA017F-579A-486D-8E54-3003334B145F}"
 	ProjectSection(SolutionItems) = preProject
@@ -11,6 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kill-Update", "Kill-Update\Kill-Update.csproj", "{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B915ABF1-9AA0-4807-AE83-C8300CE75574} = {B915ABF1-9AA0-4807-AE83-C8300CE75574}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreBuild", "PreBuild\PreBuild.csproj", "{B915ABF1-9AA0-4807-AE83-C8300CE75574}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +34,10 @@ Global
 		{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}.Debug|x64.Build.0 = Debug|x64
 		{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}.Release|x64.ActiveCfg = Release|x64
 		{5ABB1569-95EC-4655-9B46-2AC2F3B3E5FF}.Release|x64.Build.0 = Release|x64
+		{B915ABF1-9AA0-4807-AE83-C8300CE75574}.Debug|x64.ActiveCfg = Debug|x64
+		{B915ABF1-9AA0-4807-AE83-C8300CE75574}.Debug|x64.Build.0 = Debug|x64
+		{B915ABF1-9AA0-4807-AE83-C8300CE75574}.Release|x64.ActiveCfg = Release|x64
+		{B915ABF1-9AA0-4807-AE83-C8300CE75574}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

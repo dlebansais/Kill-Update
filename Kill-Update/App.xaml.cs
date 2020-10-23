@@ -6,13 +6,13 @@
     /// <summary>
     /// Represents an application that disables Windows Update.
     /// </summary>
-    public partial class KillUpdateApp : Application, IDisposable
+    public partial class App : Application, IDisposable
     {
         #region Init
         /// <summary>
-        /// Initializes a new instance of the <see cref="KillUpdateApp"/> class.
+        /// Initializes a new instance of the <see cref="App"/> class.
         /// </summary>
-        public KillUpdateApp()
+        public App()
         {
             Plugin = new KillUpdatePlugin();
             PluginApp = new TaskbarIconHost.App(this, Plugin, Plugin.AssemblyName);
@@ -48,9 +48,9 @@
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="KillUpdateApp"/> class.
+        /// Finalizes an instance of the <see cref="App"/> class.
         /// </summary>
-        ~KillUpdateApp()
+        ~App()
         {
             Dispose(false);
         }

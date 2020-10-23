@@ -1,46 +1,52 @@
 # version format
-version: 1.0.{build}
+version: v{build}
 
-# branches to build
 branches:
-  # whitelist
   only:
     - master
-
-  # blacklist
-  except:
-    - gh-pages
+    - deployment
 
 # Skipping commits with particular message or from specific user
 skip_commits:
   message: "*[skip ci]*"
 
-# Build worker image (VM template)
 image: Visual Studio 2019
 
 # scripts that are called at very beginning, before repo cloning
 init:
   - git config --global core.autocrlf input
 
-# this is how to allow failing jobs in the matrix
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
 
-# exclude configuration from the matrix. Works similarly to 'allow_failures' but build not even being started for excluded combination.
-  exclude:
-    - platform: x64
-      configuration: Debug
-
-# scripts to run before build
 before_build:
-  - nuget restore
+  - nuget restore %APPVEYOR_PROJECT_NAME%.sln
 
 build:
-  project: Kill-Update.sln      # path to Visual Studio solution or project
+  project: build_all.xml
 
-# Skipping all tests
-test:
-  assemblies:
-    except:
-      - Kill-Update.dll
-      - Test-Kill-Update.dll
+after_build:
+  - ps: |-
+        $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
+  - ps: $version = $xml.Project.PropertyGroup.Version
+  - ps: set version_tag v$version
+  - ps: $env:VERSION_TAG=$version_tag
+  - echo "Version is %VERSION_TAG%"
+
+test: off
+
+artifacts:
+  - path: $(APPVEYOR_PROJECT_NAME)/bin/x64/Release/net48/win-x64/$(APPVEYOR_PROJECT_NAME).exe
+    name: $(APPVEYOR_PROJECT_NAME)
+
+deploy:
+  - provider: GitHub
+    release: $(VERSION_TAG)
+    description: 'Automatic deployment'
+    auth_token:
+      secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
+    artifact: $(APPVEYOR_PROJECT_NAME)
+    draft: true
+    prerelease: false
+    on:
+      branch: deployment
