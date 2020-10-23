@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="Build">
+    <MSBuild Projects="TaskbarTools.sln" Properties="Configuration=Debug;Platform=x64" />
+    <MSBuild Projects="TaskbarTools.sln" Properties="Configuration=Release;Platform=x64" />
+  </Target>
+</Project>
