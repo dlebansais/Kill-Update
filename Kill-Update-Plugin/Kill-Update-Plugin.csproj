@@ -48,7 +48,8 @@
     <PackageReference Include="TaskbarIconHost" Version="1.0.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="RegistryTools-Debug" Version="1.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="RegistryTools" Version="1.0.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-    <PackageReference Include="ZombifyMe" Version="1.0.1" />
+    <PackageReference Include="ZombifyMe-Debug" Version="1.0.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="ZombifyMe" Version="1.0.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
   </ItemGroup>
 
   <ItemGroup>
