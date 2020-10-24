@@ -21,6 +21,14 @@ matrix:
 
 before_build:
   - nuget restore %APPVEYOR_PROJECT_NAME%.sln
+  - |-
+    printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" > build_all.xml
+    printf "  <Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n" >> build_all.xml
+    printf "    <Target Name=\"Build\">\n" >> build_all.xml
+    printf "      <MSBuild Projects=\"%APPVEYOR_PROJECT_NAME%.sln\" Properties=\"Configuration=Debug;Platform=x64\"/>\n" >> build_all.xml
+    printf "      <MSBuild Projects=\"%APPVEYOR_PROJECT_NAME%.sln\" Properties=\"Configuration=Release;Platform=x64\"/>\n" >> build_all.xml
+    printf "    </Target>\n" >> build_all.xml
+    printf "</Project>\n" >> build_all.xml
 
 build:
   project: build_all.xml
