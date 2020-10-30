@@ -20,6 +20,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Kill-Update.png" />
+    <None Remove="Resources\Locked-Disabled.ico" />
+    <None Remove="Resources\Locked-Enabled.ico" />
+    <None Remove="Resources\UAC-16.png" />
+    <None Remove="Resources\Unlocked-Disabled.ico" />
+    <None Remove="Resources\Unlocked-Enabled.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Kill-Update.png" />
+    <EmbeddedResource Include="Resources\Locked-Disabled.ico" />
+    <EmbeddedResource Include="Resources\Locked-Enabled.ico" />
+    <EmbeddedResource Include="Resources\UAC-16.png" />
+    <EmbeddedResource Include="Resources\Unlocked-Disabled.ico" />
+    <EmbeddedResource Include="Resources\Unlocked-Enabled.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="4.1.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -44,8 +62,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Tracing" Version="2.2.19302.1" />
-    <PackageReference Include="TaskbarIconHost-Debug" Version="1.0.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <PackageReference Include="TaskbarIconHost" Version="1.0.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+    <PackageReference Include="TaskbarIconHost-Debug" Version="1.0.4" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="TaskbarIconHost" Version="1.0.4" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+    <PackageReference Include="ResourceTools-Debug" Version="1.1.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="ResourceTools" Version="1.1.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="RegistryTools-Debug" Version="1.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="RegistryTools" Version="1.0.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="ZombifyMe-Debug" Version="1.0.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
@@ -63,14 +83,8 @@
 
   <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" Condition="$(CopyLocalLockFileAssemblies) == true" AfterTargets="ResolveReferences">
     <ItemGroup>
-      <ReferenceCopyLocalPaths 
-        Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).pdb')" 
-        Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != ''
-                    and Exists('%(RootDir)%(Directory)%(Filename).pdb')" />
-      <ReferenceCopyLocalPaths 
-        Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" 
-        Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != ''
-                    and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
+      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).pdb')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != ''&#xD;&#xA;                    and Exists('%(RootDir)%(Directory)%(Filename).pdb')" />
+      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != ''&#xD;&#xA;                    and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
     </ItemGroup>
   </Target>
 

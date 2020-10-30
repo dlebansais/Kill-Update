@@ -11,6 +11,7 @@
     using System.Windows.Input;
     using System.Windows.Threading;
     using RegistryTools;
+    using ResourceTools;
     using TaskbarIconHost;
     using Tracing;
     using ZombifyMe;
@@ -210,14 +211,14 @@
 
                 if (IsElevated)
                     if (IsLockEnabled)
-                        LoadEmbeddedResource("Locked-Enabled.ico", out Result);
+                        ResourceLoader.LoadIcon("Locked-Enabled.ico", string.Empty, out Result);
                     else
-                        LoadEmbeddedResource("Unlocked-Enabled.ico", out Result);
+                        ResourceLoader.LoadIcon("Unlocked-Enabled.ico", string.Empty, out Result);
                 else
                     if (IsLockEnabled)
-                        LoadEmbeddedResource("Locked-Disabled.ico", out Result);
+                        ResourceLoader.LoadIcon("Locked-Disabled.ico", string.Empty, out Result);
                     else
-                        LoadEmbeddedResource("Unlocked-Disabled.ico", out Result);
+                        ResourceLoader.LoadIcon("Unlocked-Disabled.ico", string.Empty, out Result);
 
                 return Result;
             }
@@ -230,7 +231,7 @@
         {
             get
             {
-                LoadEmbeddedResource("Kill-Update.png", out Bitmap Result);
+                ResourceLoader.LoadBitmap("Kill-Update.png", string.Empty, out Bitmap Result);
                 return Result;
             }
         }
@@ -329,32 +330,6 @@
         private void AddLog(string message)
         {
             Logger.Write(Category.Information, message);
-        }
-
-        private bool LoadEmbeddedResource<T>(string resourceName, out T resource)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string ResourcePath = string.Empty;
-
-            // Loads an "Embedded Resource" of type T (ex: Bitmap for a PNG file).
-            // Make sure the resource is tagged as such in the resource properties.
-            foreach (string Item in assembly.GetManifestResourceNames())
-                if (Item.EndsWith(resourceName, StringComparison.InvariantCulture))
-                    ResourcePath = Item;
-
-            // If not found, it could be because it's not tagged as "Embedded Resource".
-            if (ResourcePath.Length == 0)
-            {
-                AddLog($"Resource {resourceName} not found");
-                resource = default!;
-                return false;
-            }
-
-            using Stream rs = assembly.GetManifestResourceStream(ResourcePath);
-            resource = (T)Activator.CreateInstance(typeof(T), rs);
-
-            AddLog($"Resource {resourceName} loaded");
-            return true;
         }
 
         private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
