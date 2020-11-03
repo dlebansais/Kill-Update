@@ -64,8 +64,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Tracing" Version="2.2.19302.1" />
-    <PackageReference Include="TaskbarIconHost-Debug" Version="1.0.5" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <PackageReference Include="TaskbarIconHost" Version="1.0.5" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+    <PackageReference Include="TaskbarIconHost-Debug" Version="1.0.6" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="TaskbarIconHost" Version="1.0.6" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="ResourceTools-Debug" Version="1.1.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="ResourceTools" Version="1.1.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="RegistryTools-Debug" Version="1.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
