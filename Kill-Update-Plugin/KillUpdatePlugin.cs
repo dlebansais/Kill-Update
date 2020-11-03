@@ -11,6 +11,7 @@
     using System.Threading;
     using System.Windows.Input;
     using System.Windows.Threading;
+    using Microsoft.Win32;
     using RegistryTools;
     using ResourceTools;
     using TaskbarIconHost;
@@ -519,10 +520,43 @@
         {
             IsIconChanged = true;
             ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
-            NativeMethods.ChangeStartMode(service, NewStartType, out _);
+            bool Success = NativeMethods.ChangeStartMode(service, NewStartType, out int Error);
 
-            StartTypeTable[service.ServiceName] = NewStartType;
-            AddLog($"Service type={NewStartType}");
+            if (Success)
+            {
+                StartTypeTable[service.ServiceName] = NewStartType;
+                AddLog($"Service type={NewStartType}");
+            }
+            else
+            {
+                AddLog($"NativeMethods.ChangeStartMode({service.ServiceName}, {NewStartType}) failed, error: {Error}");
+
+                string RegistryPath = @$"SYSTEM\CurrentControlSet\Services\{service.ServiceName}";
+                int RegistryValue = (int)(lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual);
+
+                try
+                {
+                    RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, true);
+
+                    Key.SetValue("Start", RegistryValue);
+
+                    int? NewValue = (int?)Key.GetValue("Start");
+                    if (NewValue.HasValue)
+                        if (NewValue.Value == RegistryValue)
+                        {
+                            AddLog($"Registry '{RegistryPath}' Value 'Start' changed to {RegistryValue}");
+                            AddLog($"Service type={NewStartType}");
+                        }
+                        else
+                            AddLog($"Registry '{RegistryPath}' Value 'Start', unable to change value");
+                    else
+                        AddLog($"Registry '{RegistryPath}' Value 'Start', cannot read value");
+                }
+                catch (Exception e)
+                {
+                    AddLog($"Setting Registry '{RegistryPath}' Value 'Start' failed failed, error: {e.Message}");
+                }
+            }
         }
 
         private void StopIfRunning(ServiceController service, bool lockIt)
