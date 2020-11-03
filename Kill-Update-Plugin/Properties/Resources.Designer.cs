@@ -61,6 +61,15 @@ namespace KillUpdate.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Windows Defender Allowed.
+        /// </summary>
+        public static string Defend {
+            get {
+                return ResourceManager.GetString("Defend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Locked.
         /// </summary>
         public static string Locked {

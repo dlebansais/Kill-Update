@@ -62,10 +62,10 @@ internal static class NativeMethods
                     error = Marshal.GetLastWin32Error();
 
                 int hResult = CloseServiceHandle(serviceHandle);
-                Debug.Assert(hResult == 0, "Failed to close the service");
+                Debug.Assert(hResult == 0 || hResult == 1, "Failed to close the service");
 
                 hResult = CloseServiceHandle(scManagerHandle);
-                Debug.Assert(hResult == 0, "Failed to close the service manager");
+                Debug.Assert(hResult == 0 || hResult == 1, "Failed to close the service manager");
             }
         }
 

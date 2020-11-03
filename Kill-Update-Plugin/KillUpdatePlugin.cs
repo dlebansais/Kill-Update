@@ -74,6 +74,7 @@
             Dispatcher = dispatcher;
             Settings = settings;
             Logger = logger;
+            IsDefenderEnabled = IsSettingAllowDefender;
 
             InitServiceManager();
 
@@ -83,15 +84,22 @@
                               isCheckedHandler: () => IsLockEnabled,
                               commandHandler: OnCommandLock);
 
+            InitializeCommand("Defend",
+                              isVisibleHandler: () => true,
+                              isEnabledHandler: () => IsLockEnabled && IsElevated,
+                              isCheckedHandler: () => !IsLockEnabled || IsDefenderEnabled,
+                              commandHandler: OnCommandDefender);
+
             InitZombification();
         }
 
         private void InitializeCommand(string header, Func<bool> isVisibleHandler, Func<bool> isEnabledHandler, Func<bool> isCheckedHandler, Action commandHandler)
         {
-            ICommand Command = new RoutedUICommand(Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture), header, GetType());
+            string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture);
+            ICommand Command = new RoutedUICommand(LocalizedText, header, GetType());
 
             CommandList.Add(Command);
-            MenuHeaderTable.Add(Command, header);
+            MenuHeaderTable.Add(Command, LocalizedText);
             MenuIsVisibleTable.Add(Command, isVisibleHandler);
             MenuIsEnabledTable.Add(Command, isEnabledHandler);
             MenuIsCheckedTable.Add(Command, isCheckedHandler);
@@ -186,10 +194,16 @@
         {
             bool LockIt = !IsLockEnabled;
 
-            AddLog($"Command Lock: {LockIt}");
-
             Settings.SetBool(LockedSettingName, LockIt);
             ChangeLockMode(LockIt);
+            IsMenuChanged = true;
+        }
+
+        private void OnCommandDefender()
+        {
+            IsDefenderEnabled = !IsDefenderEnabled;
+
+            Settings.SetBool(DefenderSettingName, IsDefenderEnabled);
             IsMenuChanged = true;
         }
 
@@ -373,12 +387,22 @@
         }
 
         private bool IsLockEnabled { get { return StartTypeTable.Count > 0 && StartTypeTable[MonitoredServiceList[0]] == ServiceStartMode.Disabled; } }
+        private bool IsDefenderEnabled;
 
         private bool IsSettingLock
         {
             get
             {
                 Settings.GetBool(LockedSettingName, true, out bool Value);
+                return Value;
+            }
+        }
+
+        private bool IsSettingAllowDefender
+        {
+            get
+            {
+                Settings.GetBool(DefenderSettingName, false, out bool Value);
                 return Value;
             }
         }
@@ -448,39 +472,8 @@
 
                 AddLog("Key renewed");
 
-                Dictionary<string, ServiceStartMode> PreviousStartTypeTable = new Dictionary<string, ServiceStartMode>(StartTypeTable);
-                bool LockIt = IsSettingLock;
-
-                AddLog("Lock setting read");
-
-                ServiceController[] Services = ServiceController.GetServices();
-                if (Services == null)
-                    AddLog("Failed to get services");
-                else
-                {
-                    AddLog($"Found {Services.Length} service(s)");
-
-                    foreach (ServiceController Service in Services)
-                        foreach (string ServiceName in MonitoredServiceList)
-                            if (Service.ServiceName == ServiceName)
-                            {
-                                AddLog($"Checking {ServiceName}");
-
-                                StoreServiceStartType(StartTypeTable, ServiceName, Service.StartType);
-
-                                AddLog($"Current start type: {Service.StartType}");
-
-                                if (PreviousStartTypeTable.ContainsKey(ServiceName) && PreviousStartTypeTable[ServiceName] != StartTypeTable[ServiceName])
-                                {
-                                    AddLog("Start type changed");
-
-                                    ChangeLockMode(Service, LockIt);
-                                }
-
-                                StopIfRunning(Service, LockIt);
-                                break;
-                            }
-                }
+                OnUpdateLock();
+                OnUpdateDefender();
 
                 Zombification.SetAlive();
 
@@ -490,6 +483,147 @@
             {
                 AddLog($"(from OnUpdate) {e.Message}");
             }
+        }
+
+        private void OnUpdateLock()
+        {
+            Dictionary<string, ServiceStartMode> PreviousStartTypeTable = new Dictionary<string, ServiceStartMode>(StartTypeTable);
+            bool LockIt = IsSettingLock;
+
+            AddLog("Lock setting read");
+
+            ServiceController[] Services = ServiceController.GetServices();
+            if (Services == null)
+            {
+                AddLog("Failed to get services");
+                return;
+            }
+
+            AddLog($"Found {Services.Length} service(s)");
+
+            foreach (ServiceController Service in Services)
+                foreach (string ServiceName in MonitoredServiceList)
+                    if (Service.ServiceName == ServiceName)
+                    {
+                        OnUpdateService(Service, PreviousStartTypeTable, LockIt);
+                        break;
+                    }
+        }
+
+        private void OnUpdateService(ServiceController service, Dictionary<string, ServiceStartMode> previousStartTypeTable, bool lockIt)
+        {
+            string ServiceName = service.ServiceName;
+
+            AddLog($"Checking {ServiceName}");
+
+            StoreServiceStartType(StartTypeTable, ServiceName, service.StartType);
+
+            AddLog($"Current start type: {service.StartType}");
+
+            if (previousStartTypeTable.ContainsKey(ServiceName) && previousStartTypeTable[ServiceName] != StartTypeTable[ServiceName])
+            {
+                AddLog("Start type changed");
+
+                ChangeLockMode(service, lockIt);
+            }
+
+            StopIfRunning(service, lockIt);
+        }
+
+        private void OnUpdateDefender()
+        {
+            if (!IsSettingLock || !IsSettingAllowDefender)
+                return;
+
+            DateTime LastUpdateTime = GetLastDefenderUpdateTime();
+
+            // If recent or inconsistent, stop.
+            if (LastUpdateTime + TimeSpan.FromHours(23) > DateTime.UtcNow || LastUpdateTime + TimeSpan.FromDays(1000) < DateTime.UtcNow)
+                return;
+
+            string DefenderLocation = GetDefenderLocation();
+            if (DefenderLocation.Length == 0)
+                return;
+
+            ChangeLockMode(false);
+
+            string FileName = @$"{DefenderLocation}\MpCmdRun.exe";
+            string Arguments = "-SignatureUpdate";
+
+            try
+            {
+                using Process p = new Process();
+                p.StartInfo.FileName = FileName;
+                p.StartInfo.Arguments = Arguments;
+                p.StartInfo.WorkingDirectory = DefenderLocation;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+
+                AddLog($"Starting {FileName} {Arguments}");
+
+                Stopwatch Watch = new Stopwatch();
+                Watch.Start();
+
+                p.Start();
+
+                AddLog($"Started");
+
+                p.WaitForExit((int)TimeSpan.FromMinutes(5).TotalMilliseconds);
+
+                AddLog($"Completed in: {Watch.Elapsed}");
+            }
+            catch
+            {
+            }
+
+            ChangeLockMode(true);
+        }
+
+        private DateTime GetLastDefenderUpdateTime()
+        {
+            AddLog("Reading last Windows Defender date");
+
+            DateTime Result = DateTime.UtcNow;
+
+            try
+            {
+                string RegistryPath = @"SOFTWARE\Microsoft\Windows Defender\Signature Updates";
+                using RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, false);
+                byte[] Data = (byte[])Key.GetValue("SignatureUpdateLastAttempted");
+                long Ticks = BitConverter.ToInt64(Data, 0);
+
+                Result = DateTime.FromFileTimeUtc(Ticks);
+
+                AddLog($"Last Windows Defender date: {Result}");
+            }
+            catch
+            {
+            }
+
+            return Result;
+        }
+
+        private string GetDefenderLocation()
+        {
+            AddLog("Reading Windows Defender location");
+
+            string Result = string.Empty;
+
+            try
+            {
+                string RegistryPath = @"SOFTWARE\Microsoft\Windows Defender";
+                using RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, false);
+                string Data = (string)Key.GetValue("RemediationExe");
+
+                Result = Path.GetDirectoryName(Data);
+
+                AddLog($"Windows Defender location: {Result}");
+            }
+            catch
+            {
+            }
+
+            return Result;
         }
 
         private void ChangeLockMode(bool lockIt)
@@ -536,7 +670,7 @@
 
                 try
                 {
-                    RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, true);
+                    using RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, true);
 
                     Key.SetValue("Start", RegistryValue);
 
@@ -578,6 +712,7 @@
         }
 
         private const string LockedSettingName = "Locked";
+        private const string DefenderSettingName = "AllowDefender";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
         private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
         private List<string> MonitoredServiceList = new List<string>()
