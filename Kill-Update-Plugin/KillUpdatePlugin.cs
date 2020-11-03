@@ -37,7 +37,7 @@
         /// </summary>
         public Guid Guid
         {
-            get { return new Guid("{FFFFFFFF-E9B9-4E5D-AD4C-489A017748A5}"); }
+            get { return new Guid("{5293D078-E9B9-4E5D-AD4C-489A017748A5}"); }
         }
 
         /// <summary>
