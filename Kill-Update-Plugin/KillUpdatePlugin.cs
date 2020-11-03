@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Drawing;
+    using System.Globalization;
     using System.IO;
     using System.Reflection;
     using System.ServiceProcess;
@@ -77,7 +78,7 @@
 
             InitializeCommand("Locked",
                               isVisibleHandler: () => true,
-                              isEnabledHandler: () => StartType.HasValue && IsElevated,
+                              isEnabledHandler: () => StartTypeTable.Count > 0 && IsElevated,
                               isCheckedHandler: () => IsLockEnabled,
                               commandHandler: OnCommandLock);
 
@@ -86,7 +87,8 @@
 
         private void InitializeCommand(string header, Func<bool> isVisibleHandler, Func<bool> isEnabledHandler, Func<bool> isCheckedHandler, Action commandHandler)
         {
-            ICommand Command = new RoutedUICommand();
+            ICommand Command = new RoutedUICommand(Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture), header, GetType());
+
             CommandList.Add(Command);
             MenuHeaderTable.Add(Command, header);
             MenuIsVisibleTable.Add(Command, isVisibleHandler);
@@ -182,6 +184,8 @@
         private void OnCommandLock()
         {
             bool LockIt = !IsLockEnabled;
+
+            AddLog($"Command Lock: {LockIt}");
 
             Settings.SetBool(LockedSettingName, LockIt);
             ChangeLockMode(LockIt);
@@ -347,10 +351,12 @@
             AddLog("InitServiceManager starting");
 
             if (Settings.IsValueSet(LockedSettingName))
-                if (IsSettingLock)
-                    StartType = ServiceStartMode.Disabled;
-                else
-                    StartType = ServiceStartMode.Manual;
+            {
+                ServiceStartMode StartType = IsSettingLock ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
+
+                foreach (string ServiceName in MonitoredServiceList)
+                    StoreServiceStartType(StartTypeTable, ServiceName, StartType);
+            }
 
             UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
             FullRestartTimer = new Timer(new TimerCallback(FullRestartTimerCallback));
@@ -365,7 +371,8 @@
             AddLog("InitServiceManager done");
         }
 
-        private bool IsLockEnabled { get { return StartType.HasValue && StartType == ServiceStartMode.Disabled; } }
+        private bool IsLockEnabled { get { return StartTypeTable.Count > 0 && StartTypeTable[MonitoredServiceList[0]] == ServiceStartMode.Disabled; } }
+
         private bool IsSettingLock
         {
             get
@@ -440,7 +447,7 @@
 
                 AddLog("Key renewed");
 
-                ServiceStartMode? PreviousStartType = StartType;
+                Dictionary<string, ServiceStartMode> PreviousStartTypeTable = new Dictionary<string, ServiceStartMode>(StartTypeTable);
                 bool LockIt = IsSettingLock;
 
                 AddLog("Lock setting read");
@@ -453,29 +460,28 @@
                     AddLog($"Found {Services.Length} service(s)");
 
                     foreach (ServiceController Service in Services)
-                        if (Service.ServiceName == WindowsUpdateServiceName)
-                        {
-                            AddLog($"Checking {Service.ServiceName}");
-
-                            StartType = Service.StartType;
-
-                            AddLog($"Current start type: {StartType}");
-
-                            if (PreviousStartType.HasValue && PreviousStartType.Value != StartType.Value)
+                        foreach (string ServiceName in MonitoredServiceList)
+                            if (Service.ServiceName == ServiceName)
                             {
-                                AddLog("Start type changed");
+                                AddLog($"Checking {ServiceName}");
 
-                                ChangeLockMode(Service, LockIt);
+                                StoreServiceStartType(StartTypeTable, ServiceName, Service.StartType);
+
+                                AddLog($"Current start type: {Service.StartType}");
+
+                                if (PreviousStartTypeTable.ContainsKey(ServiceName) && PreviousStartTypeTable[ServiceName] != StartTypeTable[ServiceName])
+                                {
+                                    AddLog("Start type changed");
+
+                                    ChangeLockMode(Service, LockIt);
+                                }
+
+                                StopIfRunning(Service, LockIt);
+                                break;
                             }
-
-                            StopIfRunning(Service, LockIt);
-
-                            PreviousStartType = StartType;
-                            break;
-                        }
                 }
 
-                ZombifyMe.Zombification.SetAlive();
+                Zombification.SetAlive();
 
                 AddLog("%% Timer callback completed");
             }
@@ -510,8 +516,8 @@
             ServiceStartMode NewStartType = lockIt ? ServiceStartMode.Disabled : ServiceStartMode.Manual;
             NativeMethods.ChangeStartMode(service, NewStartType, out _);
 
-            StartType = NewStartType;
-            AddLog($"Service type={StartType}");
+            StartTypeTable[service.ServiceName] = NewStartType;
+            AddLog($"Service type={NewStartType}");
         }
 
         private void StopIfRunning(ServiceController service, bool lockIt)
@@ -524,11 +530,23 @@
             }
         }
 
+        private static void StoreServiceStartType(Dictionary<string, ServiceStartMode> table, string serviceName, ServiceStartMode startType)
+        {
+            if (!table.ContainsKey(serviceName))
+                table.Add(serviceName, startType);
+            else
+                table[serviceName] = startType;
+        }
+
         private const string WindowsUpdateServiceName = "wuauserv";
         private const string LockedSettingName = "Locked";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
         private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
-        private ServiceStartMode? StartType;
+        private List<string> MonitoredServiceList = new List<string>()
+        {
+            "wuauserv", // Windows Update
+        };
+        private Dictionary<string, ServiceStartMode> StartTypeTable = new Dictionary<string, ServiceStartMode>();
         private Timer? UpdateTimer;
         private Timer? FullRestartTimer;
         private Stopwatch UpdateWatch = null!;
