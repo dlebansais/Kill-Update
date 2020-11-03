@@ -41,7 +41,7 @@
         /// <summary>
         /// Gets the plugin assembly name.
         /// </summary>
-        public string AssemblyName { get; } = "Kill-Update";
+        public string AssemblyName { get; } = "Kill-Update-Plugin";
 
         /// <summary>
         ///  Gets a value indicating whether the plugin require elevated (administrator) mode to operate.
