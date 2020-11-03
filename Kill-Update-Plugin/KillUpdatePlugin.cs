@@ -545,6 +545,8 @@
         private List<string> MonitoredServiceList = new List<string>()
         {
             "wuauserv", // Windows Update
+            "WaaSMedicSvc", // Windows Update Medic Service
+            "UsoSvc", // Update Orchestrator Service
         };
         private Dictionary<string, ServiceStartMode> StartTypeTable = new Dictionary<string, ServiceStartMode>();
         private Timer? UpdateTimer;
