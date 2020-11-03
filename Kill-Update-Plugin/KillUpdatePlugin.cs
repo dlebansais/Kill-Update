@@ -495,18 +495,23 @@
         {
             AddLog("ChangeLockMode starting");
 
-            try
+            if (!IsElevated)
             {
-                using ServiceController Service = new ServiceController(WindowsUpdateServiceName);
-
-                if (IsElevated)
-                    ChangeLockMode(Service, lockIt);
-                else
-                    AddLog("Not elevated, cannot change");
+                AddLog("Not elevated, cannot change");
+                return;
             }
-            catch (Exception e)
+
+            foreach (string ServiceName in MonitoredServiceList)
             {
-                AddLog($"(from ChangeLockMode) {e.Message}");
+                try
+                {
+                    using ServiceController Service = new ServiceController(ServiceName);
+                    ChangeLockMode(Service, lockIt);
+                }
+                catch (Exception e)
+                {
+                    AddLog($"(from ChangeLockMode, for {ServiceName}) {e.Message}");
+                }
             }
         }
 
@@ -538,7 +543,6 @@
                 table[serviceName] = startType;
         }
 
-        private const string WindowsUpdateServiceName = "wuauserv";
         private const string LockedSettingName = "Locked";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
         private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
