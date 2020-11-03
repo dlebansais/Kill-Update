@@ -9,14 +9,14 @@
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.93</Version>
+    <Version>1.1.0</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product>Kill-Update</Product>
     <Description>Prevents Windows 10 from updating. Can be manually disabled when updating is convenient.</Description>
     <Copyright>Copyright © David Le Bansais 2019</Copyright>
-    <AssemblyVersion>1.0.93.327</AssemblyVersion>
-    <FileVersion>1.0.93.292</FileVersion>
+    <AssemblyVersion>1.1.0.330</AssemblyVersion>
+    <FileVersion>1.1.0.330</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/dlebansais/Kill-Update</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>

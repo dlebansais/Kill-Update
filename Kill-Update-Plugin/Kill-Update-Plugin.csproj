@@ -6,14 +6,14 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.93</Version>
+    <Version>1.1.0</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
     <Description>Prevents Windows 10 from updating (Plugin version)</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.0.93.330</AssemblyVersion>
-    <FileVersion>1.0.93.294</FileVersion>
+    <AssemblyVersion>1.1.0.330</AssemblyVersion>
+    <FileVersion>1.1.0.330</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Kill-Update</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>KillUpdate</RootNamespace>
