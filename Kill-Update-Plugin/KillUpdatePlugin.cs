@@ -6,7 +6,6 @@
     using System.Drawing;
     using System.Globalization;
     using System.IO;
-    using System.Reflection;
     using System.ServiceProcess;
     using System.Threading;
     using System.Windows.Input;
