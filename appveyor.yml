@@ -29,6 +29,8 @@ before_build:
     printf "      <MSBuild Projects=\"%APPVEYOR_PROJECT_NAME%.sln\" Properties=\"Configuration=Release;Platform=x64\"/>\n" >> build_all.xml
     printf "    </Target>\n" >> build_all.xml
     printf "</Project>\n" >> build_all.xml
+  - |-
+    printf "{ \"sdk\": { \"version\": \"3.1.102\", \"rollForward\": \"latestFeature\" } }" > global.json
 
 build:
   project: build_all.xml
