@@ -94,7 +94,7 @@
 
         private void InitializeCommand(string header, Func<bool> isVisibleHandler, Func<bool> isEnabledHandler, Func<bool> isCheckedHandler, Action commandHandler)
         {
-            string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture);
+            string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture) !;
             ICommand Command = new RoutedUICommand(LocalizedText, header, GetType());
 
             CommandList.Add(Command);
@@ -414,7 +414,7 @@
             UpdateTimer = null;
         }
 
-        private void UpdateTimerCallback(object parameter)
+        private void UpdateTimerCallback(object? parameter)
         {
             // Protection against reentering too many times after a sleep/wake up.
             // There must be at most two pending calls to OnUpdate in the dispatcher.
@@ -431,7 +431,7 @@
             Dispatcher.BeginInvoke(new OnUpdateHandler(OnUpdate));
         }
 
-        private void FullRestartTimerCallback(object parameter)
+        private void FullRestartTimerCallback(object? parameter)
         {
             if (UpdateTimer != null)
             {
@@ -587,13 +587,15 @@
             try
             {
                 string RegistryPath = @"SOFTWARE\Microsoft\Windows Defender\Signature Updates";
-                using RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, false);
-                byte[] Data = (byte[])Key.GetValue("SignatureUpdateLastAttempted");
-                long Ticks = BitConverter.ToInt64(Data, 0);
+                using RegistryKey? Key = Registry.LocalMachine.OpenSubKey(RegistryPath, false);
+                byte[]? Data = Key?.GetValue("SignatureUpdateLastAttempted") as byte[];
+                if (Data != null)
+                {
+                    long Ticks = BitConverter.ToInt64(Data, 0);
+                    Result = DateTime.FromFileTimeUtc(Ticks);
 
-                Result = DateTime.FromFileTimeUtc(Ticks);
-
-                AddLog($"Last Windows Defender date: {Result}");
+                    AddLog($"Last Windows Defender date: {Result}");
+                }
             }
             catch
             {
@@ -611,12 +613,17 @@
             try
             {
                 string RegistryPath = @"SOFTWARE\Microsoft\Windows Defender";
-                using RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, false);
-                string Data = (string)Key.GetValue("RemediationExe");
+                using RegistryKey? Key = Registry.LocalMachine.OpenSubKey(RegistryPath, false);
+                string? Data = Key?.GetValue("RemediationExe") as string;
 
-                Result = Path.GetDirectoryName(Data);
+                if (Data != null)
+                {
+                    string? DirectoryName = Path.GetDirectoryName(Data);
+                    if (DirectoryName != null)
+                        Result = DirectoryName;
 
-                AddLog($"Windows Defender location: {Result}");
+                    AddLog($"Windows Defender location: {Result}");
+                }
             }
             catch
             {
@@ -669,21 +676,23 @@
 
                 try
                 {
-                    using RegistryKey Key = Registry.LocalMachine.OpenSubKey(RegistryPath, true);
+                    using RegistryKey? Key = Registry.LocalMachine.OpenSubKey(RegistryPath, true);
+                    if (Key != null)
+                    {
+                        Key.SetValue("Start", RegistryValue);
 
-                    Key.SetValue("Start", RegistryValue);
-
-                    int? NewValue = (int?)Key.GetValue("Start");
-                    if (NewValue.HasValue)
-                        if (NewValue.Value == RegistryValue)
-                        {
-                            AddLog($"Registry '{RegistryPath}' Value 'Start' changed to {RegistryValue}");
-                            AddLog($"Service type={NewStartType}");
-                        }
+                        int? NewValue = (int?)Key.GetValue("Start");
+                        if (NewValue.HasValue)
+                            if (NewValue.Value == RegistryValue)
+                            {
+                                AddLog($"Registry '{RegistryPath}' Value 'Start' changed to {RegistryValue}");
+                                AddLog($"Service type={NewStartType}");
+                            }
+                            else
+                                AddLog($"Registry '{RegistryPath}' Value 'Start', unable to change value");
                         else
-                            AddLog($"Registry '{RegistryPath}' Value 'Start', unable to change value");
-                    else
-                        AddLog($"Registry '{RegistryPath}' Value 'Start', cannot read value");
+                            AddLog($"Registry '{RegistryPath}' Value 'Start', cannot read value");
+                    }
                 }
                 catch (Exception e)
                 {
