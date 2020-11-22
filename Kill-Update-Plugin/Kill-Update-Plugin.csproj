@@ -13,8 +13,8 @@
     <Product />
     <Description>Prevents Windows 10 from updating (Plugin version)</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.1.0.333</AssemblyVersion>
-    <FileVersion>1.1.0.333</FileVersion>
+    <AssemblyVersion>1.1.0.334</AssemblyVersion>
+    <FileVersion>1.1.0.334</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Kill-Update</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>KillUpdate</RootNamespace>
@@ -58,8 +58,8 @@
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
     <PackageReference Include="Tracing" Version="2.2.19302.1" />
-    <PackageReference Include="TaskbarIconHost-Debug" Version="1.0.9" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <PackageReference Include="TaskbarIconHost" Version="1.0.9" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+    <PackageReference Include="TaskbarIconHost-Debug" Version="1.0.10" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="TaskbarIconHost" Version="1.0.10" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="ResourceTools-Debug" Version="1.1.3" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="ResourceTools" Version="1.1.3" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="RegistryTools-Debug" Version="1.1.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />

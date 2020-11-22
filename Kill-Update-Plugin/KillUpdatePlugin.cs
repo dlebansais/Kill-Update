@@ -225,19 +225,20 @@
         {
             get
             {
-                Icon Result;
+                string ResourceName;
 
                 if (IsElevated)
                     if (IsLockEnabled)
-                        ResourceLoader.LoadIcon("Locked-Enabled.ico", string.Empty, out Result);
+                        ResourceName = "Locked-Enabled.ico";
                     else
-                        ResourceLoader.LoadIcon("Unlocked-Enabled.ico", string.Empty, out Result);
+                        ResourceName = "Unlocked-Enabled.ico";
                 else
                     if (IsLockEnabled)
-                        ResourceLoader.LoadIcon("Locked-Disabled.ico", string.Empty, out Result);
+                        ResourceName = "Locked-Disabled.ico";
                     else
-                        ResourceLoader.LoadIcon("Unlocked-Disabled.ico", string.Empty, out Result);
+                        ResourceName = "Unlocked-Disabled.ico";
 
+                ResourceLoader.LoadIcon(ResourceName, string.Empty, out Icon Result);
                 return Result;
             }
         }
