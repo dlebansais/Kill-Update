@@ -2,7 +2,7 @@
 Prevents Windows 10 from updating. Can be manually disabled when updating is convenient.
 
 # Using the program
-Copy [the latest release](https://github.com/dlebansais/Kill-Update/releases/download/v1.0.92/KillUpdate.exe) in a directory, then run it as administrator. This will create a little icon in the task bar.
+Copy [the latest release](https://github.com/dlebansais/Kill-Update/releases/download/v1.1.0/KillUpdate.exe) in a directory, then run it as administrator. This will create a little icon in the task bar.
 
 Right-click the icon to pop a menu with the following items:
 
@@ -11,10 +11,14 @@ Right-click the icon to pop a menu with the following items:
 - Exit
 
 # How does it work?
-Every 10 seconds, this application checks the Windows Update service, and if not disabled, disables it.
+Every 10 seconds, this application checks a few services related to Windows Update, and if not disabled, disables them.
 
 # Manually upgrading Windows
 To upgrade manually, first uncheck the Locked menu (see above), then open Windows settings and check for updates. When they have been installed and the computer has rebooted, you can check the Locked menu again.
+
+# Enabling Windows Defender
+
+If enabled in the menu, this program temporarily re-enables updates, then tells Windows Defender to download new signatures, and disables updates again. It does so every day.
 
 # Log file (optional)
 
