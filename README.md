@@ -2,7 +2,7 @@
 Prevents Windows 10 from updating. Can be manually disabled when updating is convenient.
 
 # Using the program
-Copy [the latest release](https://github.com/dlebansais/Kill-Update/releases/download/v1.1.0/KillUpdate.exe) in a directory, then run it as administrator. This will create a little icon in the task bar.
+Copy [the latest release](https://github.com/dlebansais/Kill-Update/releases/download/v1.1.0/Kill-Update.exe) in a directory, then run it as administrator. This will create a little icon in the task bar.
 
 Right-click the icon to pop a menu with the following items:
 
