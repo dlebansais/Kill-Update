@@ -18,7 +18,12 @@
     <RepositoryUrl>https://github.com/dlebansais/Kill-Update</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>KillUpdate</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Resources\Kill-Update.png" />
