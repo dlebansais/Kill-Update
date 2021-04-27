@@ -1,6 +1,6 @@
 if not exist "%~1..\Version Tools\VersionBuilder.exe" goto error
 
-"%~1..\Version Tools\VersionBuilder.exe" %2 %3 -v
+"%~1..\Version Tools\VersionBuilder.exe" %2 -v
 goto end
 
 :error

@@ -94,7 +94,7 @@
 
         private void InitializeCommand(string header, Func<bool> isVisibleHandler, Func<bool> isEnabledHandler, Func<bool> isCheckedHandler, Action commandHandler)
         {
-            string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture) !;
+            string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture)!;
             ICommand Command = new RoutedUICommand(LocalizedText, header, GetType());
 
             CommandList.Add(Command);
