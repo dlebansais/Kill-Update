@@ -16,11 +16,17 @@ image: Visual Studio 2019
 init:
   - git config --global core.autocrlf input
 
+environment:
+  package_token:
+    secure: bpUW4FC8f65OAKq9z31b95q6rDsYG7R9QR39MNe7u0mmgEugA+0WOw5+Zrw5kh4Z
+
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
 
 before_build:
+  - ps: (Get-Content nuget.config).replace('Insert token here', $env:package_token) | Set-Content nuget.config
   - nuget restore %APPVEYOR_PROJECT_NAME%.sln
+  - nuget install GitCommitId -DependencyVersion Highest -OutputDirectory packages
   - |-
     printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" > build_all.xml
     printf "  <Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n" >> build_all.xml
@@ -34,10 +40,20 @@ build:
   project: build_all.xml
 
 after_build:
+  - nuget install Packager -DependencyVersion Highest -OutputDirectory packages # Install Packager
+  - ps: $folder = Get-ChildItem -Path packages/Packager.* -Name | Out-String    # Get the installation folder (we don't know the actual version)
+  - ps: $firstline = ($folder -split '\r\n')[0]                                 # Get rid of carriage-return
+  - ps: $fullpath = ".\packages\$firstline\lib\net48\Packager.exe"              # Build full path
+  - ps: $env:PACKAGER_PATH=$fullpath
+  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS%'                                 # Execute the packager: the output is nuget\%APPVEYOR_PROJECT_NAME%.nuspec
+  - if exist nuget\%APPVEYOR_PROJECT_NAME%.nuspec nuget pack nuget\%APPVEYOR_PROJECT_NAME%.nuspec
+  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --debug'                         # Execute the packager: the output is nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
+  - if exist nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
   - ps: |-
         $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
   - ps: $version = $xml.Project.PropertyGroup.Version
   - ps: set version_tag v$version
+  - ps: $version_tag = $version_tag -replace ' ',''
   - ps: $env:VERSION_TAG=$version_tag
   - echo "Version is %VERSION_TAG%"
 
@@ -46,6 +62,12 @@ test: off
 artifacts:
   - path: $(APPVEYOR_PROJECT_NAME)/bin/x64/Release/net48/win-x64/$(APPVEYOR_PROJECT_NAME).exe
     name: $(APPVEYOR_PROJECT_NAME)
+  - path: $(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
+    name: $(APPVEYOR_PROJECT_NAME)-Package-Debug
+    type: NuGetPackage
+  - path: $(APPVEYOR_PROJECT_NAME).*.nupkg
+    name: $(APPVEYOR_PROJECT_NAME)-Package-Release
+    type: NuGetPackage
 
 deploy:
   - provider: GitHub
@@ -54,7 +76,25 @@ deploy:
     auth_token:
       secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
     artifact: $(APPVEYOR_PROJECT_NAME)
-    draft: true
+    draft: false
     prerelease: false
+    on:
+      branch: deployment
+  - provider: NuGet
+    server: https://nuget.pkg.github.com/dlebansais/index.json
+    symbol_server: https://nuget.pkg.github.com/dlebansais/index.json
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
+    username: dlebansais
+    api_key:
+      secure: GOksqNi8I7Vs6dcsfosJvSa9vMaZH3zLQJjnx+ruJy6ZeLF075mifj4MdRI34E8W
+    on:
+      branch: deployment
+  - provider: NuGet
+    server: https://nuget.pkg.github.com/dlebansais/index.json
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
+    skip_symbols: true
+    username: dlebansais
+    api_key:
+      secure: GOksqNi8I7Vs6dcsfosJvSa9vMaZH3zLQJjnx+ruJy6ZeLF075mifj4MdRI34E8W
     on:
       branch: deployment

@@ -21,6 +21,9 @@ dotnet_diagnostic.SA1203.severity = none
 # SA1204: Static elements should appear before instance elements
 dotnet_diagnostic.SA1204.severity = none
 
+# SA1214: Readonly fields should appear before non-readonly fields
+dotnet_diagnostic.SA1214.severity = silent
+
 # SA1306: Field names should begin with lower-case letter
 dotnet_diagnostic.SA1306.severity = silent
 
@@ -36,6 +39,9 @@ dotnet_diagnostic.SA1502.severity = silent
 # SA1503: Braces should not be omitted
 dotnet_diagnostic.SA1503.severity = silent
 
+# SA1504: All accessors should be single-line or multi-line
+dotnet_diagnostic.SA1504.severity = silent
+
 # SA1514: Element documentation header should be preceded by blank line
 dotnet_diagnostic.SA1514.severity = silent
 
@@ -47,6 +53,9 @@ dotnet_diagnostic.SA1519.severity = silent
 
 # SA1520: Use braces consistently
 dotnet_diagnostic.SA1520.severity = silent
+
+# SA1615: Element return value should be documented
+dotnet_diagnostic.SA1615.severity = silent
 
 # SA1633: File should have header
 dotnet_diagnostic.SA1633.severity = silent
