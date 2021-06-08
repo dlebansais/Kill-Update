@@ -373,15 +373,7 @@
                     StoreServiceStartType(StartTypeTable, ServiceName, StartType);
             }
 
-            UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
-            FullRestartTimer = new Timer(new TimerCallback(FullRestartTimerCallback));
-            UpdateWatch = new Stopwatch();
-            UpdateWatch.Start();
-
-            OnUpdate();
-
-            UpdateTimer.Change(CheckInterval, CheckInterval);
-            FullRestartTimer.Change(FullRestartInterval, Timeout.InfiniteTimeSpan);
+            UpdateTimer = SafeTimer.Create(OnUpdate, CheckInterval, Logger);
 
             AddLog("InitServiceManager done");
         }
@@ -409,52 +401,8 @@
 
         private void StopServiceManager()
         {
-            FullRestartTimer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            FullRestartTimer = null;
-            UpdateTimer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            UpdateTimer = null;
+            SafeTimer.Destroy(ref UpdateTimer);
         }
-
-        private void UpdateTimerCallback(object? parameter)
-        {
-            // Protection against reentering too many times after a sleep/wake up.
-            // There must be at most two pending calls to OnUpdate in the dispatcher.
-            int NewTimerDispatcherCount = Interlocked.Increment(ref TimerDispatcherCount);
-            if (NewTimerDispatcherCount > 2)
-            {
-                Interlocked.Decrement(ref TimerDispatcherCount);
-                return;
-            }
-
-            // For debug purpose.
-            LastTotalElapsed = Math.Round(UpdateWatch.Elapsed.TotalSeconds, 0);
-
-            Dispatcher.BeginInvoke(new OnUpdateHandler(OnUpdate));
-        }
-
-        private void FullRestartTimerCallback(object? parameter)
-        {
-            if (UpdateTimer != null)
-            {
-                AddLog("Restarting the timer");
-
-                // Restart the update timer from scratch.
-                UpdateTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-
-                UpdateTimer = new Timer(new TimerCallback(UpdateTimerCallback));
-                UpdateTimer.Change(CheckInterval, CheckInterval);
-
-                AddLog("Timer restarted");
-            }
-            else
-                AddLog("No timer to restart");
-
-            FullRestartTimer?.Change(FullRestartInterval, Timeout.InfiniteTimeSpan);
-            AddLog($"Next check scheduled at {DateTime.UtcNow + FullRestartInterval}");
-        }
-
-        private int TimerDispatcherCount = 1;
-        private double LastTotalElapsed = double.NaN;
 
         private delegate void OnUpdateHandler();
         private void OnUpdate()
@@ -463,10 +411,7 @@
             {
                 AddLog("%% Running timer callback");
 
-                int LastTimerDispatcherCount = Interlocked.Decrement(ref TimerDispatcherCount);
-                UpdateWatch.Restart();
-
-                AddLog($"Watch restarted, Elapsed = {LastTotalElapsed}, pending count = {LastTimerDispatcherCount}");
+                UpdateTimer?.NotifyCallbackCalled();
 
                 Settings.RenewKey();
 
@@ -723,7 +668,6 @@
         private const string LockedSettingName = "Locked";
         private const string DefenderSettingName = "AllowDefender";
         private readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
-        private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
         private List<string> MonitoredServiceList = new List<string>()
         {
             "wuauserv", // Windows Update
@@ -731,9 +675,7 @@
             "UsoSvc", // Update Orchestrator Service
         };
         private Dictionary<string, ServiceStartMode> StartTypeTable = new Dictionary<string, ServiceStartMode>();
-        private Timer? UpdateTimer;
-        private Timer? FullRestartTimer;
-        private Stopwatch UpdateWatch = null!;
+        private SafeTimer? UpdateTimer;
         #endregion
 
         #region Zombification
@@ -821,13 +763,7 @@
             {
             }
 
-            using (FullRestartTimer)
-            {
-            }
-
-            using (UpdateTimer)
-            {
-            }
+            SafeTimer.Destroy(ref UpdateTimer);
         }
         #endregion
     }

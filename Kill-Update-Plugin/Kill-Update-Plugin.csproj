@@ -13,8 +13,8 @@
     <Product />
     <Description>Prevents Windows 10 from updating (Plugin version)</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.1.1.335</AssemblyVersion>
-    <FileVersion>1.1.1.335</FileVersion>
+    <AssemblyVersion>1.1.1.336</AssemblyVersion>
+    <FileVersion>1.1.1.336</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Kill-Update</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>KillUpdate</RootNamespace>
