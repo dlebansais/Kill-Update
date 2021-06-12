@@ -107,7 +107,7 @@
             // For debug purpose.
             LastTotalElapsed = Math.Round(UpdateWatch.Elapsed.TotalSeconds, 0);
 
-            Dispatcher.CurrentDispatcher.BeginInvoke(Action);
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(Action);
         }
 
         private void FullRestartTimerCallback(object? parameter)
