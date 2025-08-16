@@ -10,11 +10,11 @@
     using System.Threading;
     using System.Windows.Input;
     using System.Windows.Threading;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Win32;
     using RegistryTools;
     using ResourceTools;
     using TaskbarIconHost;
-    using Tracing;
     using ZombifyMe;
 
     /// <summary>
@@ -34,7 +34,7 @@
         /// <summary>
         /// Gets the plugin unique ID.
         /// </summary>
-        public Guid Guid
+        public Guid PluginGuid
         {
             get { return new Guid("{5293D078-E9B9-4E5D-AD4C-489A017748A5}"); }
         }
@@ -67,7 +67,7 @@
         /// <param name="dispatcher">A dispatcher that can be used to synchronize with the UI.</param>
         /// <param name="settings">An interface to read and write settings in the registry.</param>
         /// <param name="logger">An interface to log events asynchronously.</param>
-        public void Initialize(bool isElevated, Dispatcher dispatcher, Settings settings, ITracer logger)
+        public void Initialize(bool isElevated, Dispatcher dispatcher, Settings settings, ILogger logger)
         {
             IsElevated = isElevated;
             Dispatcher = dispatcher;
@@ -97,7 +97,7 @@
             string LocalizedText = Properties.Resources.ResourceManager.GetString(header, CultureInfo.CurrentCulture)!;
             ICommand Command = new RoutedUICommand(LocalizedText, header, GetType());
 
-            CommandList.Add(Command);
+            CommandListInternal.Add(Command);
             MenuHeaderTable.Add(Command, LocalizedText);
             MenuIsVisibleTable.Add(Command, isVisibleHandler);
             MenuIsEnabledTable.Add(Command, isEnabledHandler);
@@ -108,7 +108,8 @@
         /// <summary>
         /// Gets the list of commands that the plugin can receive when an item is clicked in the context menu.
         /// </summary>
-        public List<ICommand> CommandList { get; private set; } = new List<ICommand>();
+        public IReadOnlyCollection<ICommand> CommandList { get => CommandListInternal.AsReadOnly(); }
+        private List<ICommand> CommandListInternal = new List<ICommand>();
 
         /// <summary>
         /// Reads a flag indicating if the state of a menu item has changed. The flag should be reset upon return until another change occurs.
@@ -225,18 +226,7 @@
         {
             get
             {
-                string ResourceName;
-
-                if (IsElevated)
-                    if (IsLockEnabled)
-                        ResourceName = "Locked-Enabled.ico";
-                    else
-                        ResourceName = "Unlocked-Enabled.ico";
-                else
-                    if (IsLockEnabled)
-                        ResourceName = "Locked-Disabled.ico";
-                    else
-                        ResourceName = "Unlocked-Disabled.ico";
+                string ResourceName = $"{(IsLockEnabled ? "Locked" : "Unlocked")}-{(IsElevated ? "Enabled" : "Disabled")}-{(IsLightTheme ? "Light" : "Dark")}Theme.ico";
 
                 ResourceLoader.LoadIcon(ResourceName, string.Empty, out Icon Result);
                 return Result;
@@ -344,11 +334,11 @@
         /// <summary>
         /// Gets an interface to log events asynchronously.
         /// </summary>
-        public ITracer Logger { get; private set; } = null!;
+        public ILogger Logger { get; private set; } = null!;
 
         private void AddLog(string message)
         {
-            Logger.Write(Category.Information, message);
+            Logger.LogInformation(message);
         }
 
         private Dictionary<ICommand, string> MenuHeaderTable = new Dictionary<ICommand, string>();
@@ -377,6 +367,10 @@
 
             AddLog("InitServiceManager done");
         }
+
+        private bool IsLightTheme
+            => Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 0) is int Value &&
+               Value != 0;
 
         private bool IsLockEnabled { get { return StartTypeTable.Count > 0 && StartTypeTable[MonitoredServiceList[0]] == ServiceStartMode.Disabled; } }
         private bool IsDefenderEnabled;
@@ -461,11 +455,23 @@
 
             AddLog($"Checking {ServiceName}");
 
-            StoreServiceStartType(StartTypeTable, ServiceName, service.StartType);
+            ServiceStartMode StartType = default;
 
-            AddLog($"Current start type: {service.StartType}");
+            try
+            {
+                StartType = service.StartType;
+                StoreServiceStartType(StartTypeTable, ServiceName, StartType);
 
-            if (previousStartTypeTable.ContainsKey(ServiceName) && previousStartTypeTable[ServiceName] != StartTypeTable[ServiceName])
+                AddLog($"Current start type: {StartType}");
+            }
+            catch (Exception exception)
+            {
+                AddLog($"Failed to get start type: {exception.Message}");
+            }
+
+            if (previousStartTypeTable.TryGetValue(ServiceName, out ServiceStartMode previousMode) &&
+                StartTypeTable.TryGetValue(ServiceName, out ServiceStartMode currentMode) &&
+                previousMode != currentMode)
             {
                 AddLog("Start type changed");
 

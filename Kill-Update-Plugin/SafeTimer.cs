@@ -4,7 +4,7 @@
     using System.Diagnostics;
     using System.Threading;
     using System.Windows.Threading;
-    using Tracing;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Execute an action regularly at a given time interval, with safeguards.
@@ -18,7 +18,7 @@
         /// <param name="action">The action to execute.</param>
         /// <param name="timeInterval">The time interval.</param>
         /// <param name="logger">an interface to log events asynchronously.</param>
-        public static SafeTimer Create(Action action, TimeSpan timeInterval, ITracer logger)
+        public static SafeTimer Create(Action action, TimeSpan timeInterval, ILogger logger)
         {
             return new SafeTimer(action, timeInterval, logger);
         }
@@ -29,7 +29,7 @@
         /// <param name="action">The action to execute.</param>
         /// <param name="timeInterval">The time interval.</param>
         /// <param name="logger">an interface to log events asynchronously.</param>
-        protected SafeTimer(Action action, TimeSpan timeInterval, ITracer logger)
+        protected SafeTimer(Action action, TimeSpan timeInterval, ILogger logger)
         {
             Action = action;
             TimeInterval = timeInterval;
@@ -76,7 +76,7 @@
         /// <summary>
         /// Gets an interface to log events asynchronously.
         /// </summary>
-        public ITracer Logger { get; }
+        public ILogger Logger { get; }
         #endregion
 
         #region Client Interface
@@ -133,7 +133,7 @@
 
         private void AddLog(string message)
         {
-            Logger.Write(Category.Information, message);
+            Logger.LogInformation(message);
         }
 
         private readonly TimeSpan FullRestartInterval = TimeSpan.FromHours(1);
