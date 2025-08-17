@@ -49,7 +49,7 @@
         <PackageReference Include="TaskbarIconHost" Version="3.0.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)'=='net48'">
+    <ItemGroup Condition="'$(TargetFramework)'=='net481'">
         <Reference Include="PresentationCore" />
         <Reference Include="PresentationFramework" />
         <Reference Include="WindowsBase" />
