@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net481;net8.0-windows7.0</TargetFrameworks>
-        <UseWPF>true</UseWPF>
-        <LangVersion>13</LangVersion>
+        <TargetFrameworks>net481;net8.0-windows7.0;net10.0-windows7.0</TargetFrameworks>
+        <LangVersion>14</LangVersion>
         <Nullable>enable</Nullable>
         <Platforms>x64</Platforms>
+        <UseWPF>true</UseWPF>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <Version>1.1.2</Version>
+        <Version>1.2.0</Version>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
         <Description>Prevents Windows 10 from updating (Plugin version)</Description>
-        <Copyright>Copyright © 2025 David Le Bansais</Copyright>
-        <AssemblyVersion>1.1.2.340</AssemblyVersion>
-        <FileVersion>1.1.2.340</FileVersion>
+        <Copyright>Copyright © 2026 David Le Bansais</Copyright>
+        <AssemblyVersion>1.2.0.341</AssemblyVersion>
+        <FileVersion>1.2.0.341</FileVersion>
         <RepositoryUrl>https://github.com/dlebansais/Kill-Update</RepositoryUrl>
         <NeutralLanguage>en-US</NeutralLanguage>
         <RootNamespace>KillUpdate</RootNamespace>
@@ -52,27 +52,27 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="2.0.4" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <PackageReference Include="dlebansais.Method.Contracts.Analyzers-Debug" Version="2.0.10" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers" Version="2.0.4" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
+        <PackageReference Include="dlebansais.Method.Contracts.Analyzers" Version="2.0.10" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="System.Drawing.Common" Version="9.0.8" />
+        <PackageReference Include="System.Drawing.Common" Version="10.0.8" />
         <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.8" />
-        <PackageReference Include="TaskbarIconHost-Debug" Version="3.0.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="TaskbarIconHost" Version="3.0.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="ResourceTools-Debug" Version="3.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="ResourceTools" Version="3.0.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="RegistryTools-Debug" Version="3.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="RegistryTools" Version="3.0.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="ZombifyMe-Debug" Version="3.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="ZombifyMe" Version="3.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="Method.Contracts-Debug" Version="2.0.3" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="Method.Contracts" Version="2.0.3" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.TaskbarIconHost-Debug" Version="3.1.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.TaskbarIconHost" Version="3.1.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.ResourceTools-Debug" Version="3.0.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.ResourceTools" Version="3.0.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.RegistryTools-Debug" Version="3.0.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.RegistryTools" Version="3.0.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.ZombifyMe-Debug" Version="3.1.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.ZombifyMe" Version="3.1.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.Method.Contracts-Debug" Version="2.0.7" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.Method.Contracts" Version="2.0.7" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net481'">
